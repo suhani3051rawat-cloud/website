@@ -2,10 +2,10 @@
   width: 100%;
   max-width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 .app-layout *,
@@ -15,43 +15,47 @@
 }
 
 .app-layout > nav {
-  width: 98%;
+  position: sticky;
+  top: 12px;
+  flex: 0 0 120px;
+  width: 120px;
+  height:95%;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 18px;
-  padding: 16px 12px 14px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x proximity;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 8px 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
+  scrollbar-width:none;
   scrollbar-color: #bdc9aa transparent;
+  margin-bottom:5px;
+  
 }
 
 .app-layout > nav::-webkit-scrollbar {
-  height: 6px;
+  width: 5px;
 }
 
 .app-layout > nav::-webkit-scrollbar-thumb {
-  border-radius: 6px;
+  border-radius: 5px;
   background: #bdc9aa;
 }
 
 .app-layout > nav a {
-  flex: 0 0 auto;
-  width: 92px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  scroll-snap-align: center;
+  flex-shrink: 0;
   transition: transform 0.3s ease;
 }
 
 .app-layout > nav a:hover {
-  transform: translateY(-4px);
+  transform: translateX(4px);
 }
 
 .app-layout > nav a:active {
@@ -60,20 +64,14 @@
 
 .app-layout > nav img {
   display: block;
-  width: 74px;
-  height: 74px;
+  width: 110px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px #f3c94d, 0 8px 18px rgba(32, 63, 39, 0.18);
   transition: box-shadow 0.3s ease;
 }
 
-.app-layout > nav a:hover img {
-  box-shadow: 0 0 0 3px #203f27, 0 12px 22px rgba(32, 63, 39, 0.28);
-}
-
 .app-layout > nav p {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.3;
@@ -81,19 +79,17 @@
 }
 
 .route-content {
-  width: 98%;
+  flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
-  padding: 8px 0 24px;
+  padding: 8px 0 24px 0;
 }
 
 @media (min-width: 1600px) {
   .app-layout > nav {
-    gap: 26px;
-  }
-
-  .app-layout > nav a {
-    width: 108px;
+    flex-basis: 150px;
+    width: 150px;
+    gap: 20px;
   }
 
   .app-layout > nav img {
@@ -104,25 +100,18 @@
   .app-layout > nav p {
     font-size: 14px;
   }
-
-  .route-content {
-    max-width: 1800px;
-  }
 }
 
 @media (max-width: 1100px) {
   .app-layout > nav {
-    justify-content: flex-start;
+    flex-basis: 104px;
+    width: 104px;
     gap: 14px;
   }
 
-  .app-layout > nav a {
-    width: 84px;
-  }
-
   .app-layout > nav img {
-    width: 68px;
-    height: 68px;
+    width: 64px;
+    height: 64px;
   }
 
   .app-layout > nav p {
@@ -131,10 +120,18 @@
 }
 
 @media (max-width: 760px) {
+  .app-layout {
+    gap: 4px;
+  }
+
   .app-layout > nav {
-    width: 100%;
+    top: 8px;
+    flex-basis: 84px;
+    width: 84px;
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
     gap: 12px;
-    padding: 12px 14px 10px;
+    padding: 10px 4px 14px;
     scrollbar-width: none;
   }
 
@@ -142,89 +139,78 @@
     display: none;
   }
 
-  .app-layout > nav a {
-    width: 76px;
-  }
-
   .app-layout > nav img {
-    width: 62px;
-    height: 62px;
+    width: 54px;
+    height: 54px;
     box-shadow: 0 0 0 2px #f3c94d, 0 6px 14px rgba(32, 63, 39, 0.16);
   }
 
   .app-layout > nav p {
-    margin-top: 8px;
-    font-size: 12px;
+    margin-top: 6px;
+    font-size: 11.5px;
   }
 
   .route-content {
-    width: 100%;
-    padding: 6px 10px 20px;
+    padding: 6px 6px 20px 0;
   }
 }
 
 @media (max-width: 480px) {
   .app-layout > nav {
+    flex-basis: 72px;
+    width: 72px;
     gap: 10px;
-    padding: 10px 12px 8px;
-  }
-
-  .app-layout > nav a {
-    width: 68px;
+    padding: 8px 2px 12px;
   }
 
   .app-layout > nav img {
-    width: 56px;
-    height: 56px;
+    width: 46px;
+    height: 46px;
   }
 
   .app-layout > nav p {
-    font-size: 11px;
+    font-size: 10.5px;
   }
 
   .route-content {
-    padding: 4px 8px 18px;
+    padding: 4px 4px 18px 0;
   }
 }
 
 @media (max-width: 350px) {
   .app-layout > nav {
+    flex-basis: 62px;
+    width: 62px;
     gap: 8px;
-    padding: 8px 8px 6px;
-  }
-
-  .app-layout > nav a {
-    width: 60px;
   }
 
   .app-layout > nav img {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
   }
 
   .app-layout > nav p {
-    font-size: 10px;
+    font-size: 9.5px;
   }
 
   .route-content {
-    padding: 4px 6px 16px;
+    padding-right: 2px;
   }
 }
 
 @media (max-height: 480px) and (orientation: landscape) {
   .app-layout > nav {
-    padding-top: 8px;
-    padding-bottom: 6px;
+    gap: 8px;
   }
 
   .app-layout > nav img {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
   }
 
   .app-layout > nav p {
-    margin-top: 5px;
-    font-size: 11px;
+    margin-top: 4px;
+    font-size: 10.5px;
   }
 }
 
@@ -232,9 +218,5 @@
   .app-layout > nav a,
   .app-layout > nav img {
     transition-duration: 0.01ms;
-  }
-
-  .app-layout > nav {
-    scroll-behavior: auto;
   }
 }
