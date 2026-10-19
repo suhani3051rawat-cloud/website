@@ -1,3 +1,240 @@
-nav{
-    width:150px;
+.app-layout {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.app-layout *,
+.app-layout *::before,
+.app-layout *::after {
+  box-sizing: border-box;
+}
+
+.app-layout > nav {
+  width: 98%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 16px 12px 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #bdc9aa transparent;
+}
+
+.app-layout > nav::-webkit-scrollbar {
+  height: 6px;
+}
+
+.app-layout > nav::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: #bdc9aa;
+}
+
+.app-layout > nav a {
+  flex: 0 0 auto;
+  width: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  scroll-snap-align: center;
+  transition: transform 0.3s ease;
+}
+
+.app-layout > nav a:hover {
+  transform: translateY(-4px);
+}
+
+.app-layout > nav a:active {
+  transform: scale(0.96);
+}
+
+.app-layout > nav img {
+  display: block;
+  width: 74px;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #f3c94d, 0 8px 18px rgba(32, 63, 39, 0.18);
+  transition: box-shadow 0.3s ease;
+}
+
+.app-layout > nav a:hover img {
+  box-shadow: 0 0 0 3px #203f27, 0 12px 22px rgba(32, 63, 39, 0.28);
+}
+
+.app-layout > nav p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.route-content {
+  width: 98%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 8px 0 24px;
+}
+
+@media (min-width: 1600px) {
+  .app-layout > nav {
+    gap: 26px;
+  }
+
+  .app-layout > nav a {
+    width: 108px;
+  }
+
+  .app-layout > nav img {
+    width: 88px;
+    height: 88px;
+  }
+
+  .app-layout > nav p {
+    font-size: 14px;
+  }
+
+  .route-content {
+    max-width: 1800px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-layout > nav {
+    justify-content: flex-start;
+    gap: 14px;
+  }
+
+  .app-layout > nav a {
+    width: 84px;
+  }
+
+  .app-layout > nav img {
+    width: 68px;
+    height: 68px;
+  }
+
+  .app-layout > nav p {
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-layout > nav {
+    width: 100%;
+    gap: 12px;
+    padding: 12px 14px 10px;
+    scrollbar-width: none;
+  }
+
+  .app-layout > nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-layout > nav a {
+    width: 76px;
+  }
+
+  .app-layout > nav img {
+    width: 62px;
+    height: 62px;
+    box-shadow: 0 0 0 2px #f3c94d, 0 6px 14px rgba(32, 63, 39, 0.16);
+  }
+
+  .app-layout > nav p {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  .route-content {
+    width: 100%;
+    padding: 6px 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-layout > nav {
+    gap: 10px;
+    padding: 10px 12px 8px;
+  }
+
+  .app-layout > nav a {
+    width: 68px;
+  }
+
+  .app-layout > nav img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .app-layout > nav p {
+    font-size: 11px;
+  }
+
+  .route-content {
+    padding: 4px 8px 18px;
+  }
+}
+
+@media (max-width: 350px) {
+  .app-layout > nav {
+    gap: 8px;
+    padding: 8px 8px 6px;
+  }
+
+  .app-layout > nav a {
+    width: 60px;
+  }
+
+  .app-layout > nav img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .app-layout > nav p {
+    font-size: 10px;
+  }
+
+  .route-content {
+    padding: 4px 6px 16px;
+  }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .app-layout > nav {
+    padding-top: 8px;
+    padding-bottom: 6px;
+  }
+
+  .app-layout > nav img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .app-layout > nav p {
+    margin-top: 5px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-layout > nav a,
+  .app-layout > nav img {
+    transition-duration: 0.01ms;
+  }
+
+  .app-layout > nav {
+    scroll-behavior: auto;
+  }
 }
