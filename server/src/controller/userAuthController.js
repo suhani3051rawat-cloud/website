@@ -25,7 +25,6 @@ export const userRegister = async (req,res)=>{
                 return false;
             }   
         }
-        console.log(phone_number);
         if(!phone_numberCheck(phone_number)){
             return res.status(400).json({
                 message : "Please enter a valid phone number"

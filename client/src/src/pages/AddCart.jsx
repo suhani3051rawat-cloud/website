@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+import axios from "axios";
 
 import {
     useDispatch,
@@ -16,43 +18,71 @@ import {
 
 import "../components/addCart.css";
 
-const hasStoredLogin = () => {
-    try {
-        return Boolean(
-            localStorage.getItem("token") ||
-            localStorage.getItem("user")
-        );
-    } catch (error) {
-        return false;
-    }
-};
-
 function AddCart({ closeCart }) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [currentUser, setCurrentUser] = useState(null);
+    const [checkingUser, setCheckingUser] = useState(true);
+
     const cartItems = useSelector(
         state => state.cart.items
     );
 
-    const authUser = useSelector(
-        state =>
-            state.auth?.user ||
-            state.auth?.token ||
-            state.user?.currentUser ||
-            null
-    );
+    useEffect(() => {
+        let isActive = true;
 
-    const isLoggedIn = Boolean(authUser) || hasStoredLogin();
+        const fetchCurrentUser = async () => {
+            try {
+                const resp = await axios.get(
+                    `http://localhost:5000/user/Auth/getCurrent/user`,
+                    {
+                        withCredentials: true
+                    }
+                );
 
-    // Total items
+                console.log('getCurrent response:', resp.status, resp.data);
+
+                if (isActive) {
+                    setCurrentUser(
+                        resp.data.User ||
+                        resp.data.user ||
+                        resp.data.data ||
+                        null
+                    );
+                }
+            } catch (error) {
+                console.log(
+                    'getCurrent error:',
+                    error.response?.status,
+                    error.response?.data || error.message
+                );
+
+                if (isActive) {
+                    setCurrentUser(null);
+                }
+            } finally {
+                if (isActive) {
+                    setCheckingUser(false);
+                }
+            }
+        };
+
+        fetchCurrentUser();
+
+        return () => {
+            isActive = false;
+        };
+    }, []);
+
+    const isLoggedIn = Boolean(currentUser);
+
     const totalItems = cartItems.reduce(
         (total, item) => total + item.quantity,
         0
     );
 
-    // Total price
     const totalPrice = cartItems.reduce(
         (total, item) =>
             total + item.price * item.quantity,
@@ -63,6 +93,10 @@ function AddCart({ closeCart }) {
         closeCart();
         navigate(path);
     };
+
+    if (checkingUser) {
+        return null;
+    }
 
     if (!isLoggedIn) {
         return (
@@ -127,22 +161,15 @@ function AddCart({ closeCart }) {
     return (
         <>
 
-            {/* BACKDROP */}
-
             <div
                 className="cart-backdrop"
                 onClick={closeCart}
             ></div>
 
-
-            {/* CART DRAWER */}
-
             <div
                 className="cart-drawer"
                 onClick={(e) => e.stopPropagation()}
             >
-
-                {/* HEADER */}
 
                 <div className="cart-header">
 
@@ -171,9 +198,6 @@ function AddCart({ closeCart }) {
 
                 </div>
 
-
-                {/* EMPTY CART */}
-
                 {cartItems.length === 0 ? (
 
                     <div className="empty-cart">
@@ -197,8 +221,6 @@ function AddCart({ closeCart }) {
 
                     <>
 
-                        {/* PRODUCTS */}
-
                         <div className="cart-products">
 
                             {cartItems.map((item) => (
@@ -207,8 +229,6 @@ function AddCart({ closeCart }) {
                                     className="cart-item"
                                     key={item._id}
                                 >
-
-                                    {/* IMAGE */}
 
                                     <div className="cart-image">
 
@@ -219,9 +239,6 @@ function AddCart({ closeCart }) {
 
                                     </div>
 
-
-                                    {/* DETAILS */}
-
                                     <div className="cart-details">
 
                                         <h3>
@@ -231,9 +248,6 @@ function AddCart({ closeCart }) {
                                         <p className="cart-price">
                                             ₹{item.price}
                                         </p>
-
-
-                                        {/* QUANTITY */}
 
                                         <div className="quantity-box">
 
@@ -269,9 +283,6 @@ function AddCart({ closeCart }) {
 
                                     </div>
 
-
-                                    {/* ITEM TOTAL */}
-
                                     <div className="item-total">
 
                                         <strong>
@@ -301,9 +312,6 @@ function AddCart({ closeCart }) {
 
                         </div>
 
-
-                        {/* SUMMARY */}
-
                         <div className="cart-summary">
 
                             <div className="summary-row">
@@ -318,7 +326,6 @@ function AddCart({ closeCart }) {
 
                             </div>
 
-
                             <div className="summary-row">
 
                                 <span>
@@ -330,7 +337,6 @@ function AddCart({ closeCart }) {
                                 </span>
 
                             </div>
-
 
                             <div className="summary-row">
 
@@ -344,9 +350,7 @@ function AddCart({ closeCart }) {
 
                             </div>
 
-
                             <hr />
-
 
                             <div className="summary-total">
 
@@ -359,7 +363,6 @@ function AddCart({ closeCart }) {
                                 </strong>
 
                             </div>
-
 
                             <button className="checkout-btn">
                                 Proceed to Checkout

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
 import { validateForm } from '../utils/validation.js';
-import { userRegister } from '../store/RegisterUserSlice.js';
 
 function UserRegister({ onClose }) {
   const [formData, setFormData] = useState({
@@ -14,13 +13,11 @@ function UserRegister({ onClose }) {
     phone_number: ''
   });
   const [validationErrors, setValidationErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { loading, message, error } = useSelector(
-    (state) => state.userRegister
-  );
 
   const handleClose = () => {
     if (typeof onClose === 'function') {
@@ -63,21 +60,32 @@ function UserRegister({ onClose }) {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const result = await dispatch(userRegister(formData));
+      const resp = await axios.post(
+        `http://localhost:5000/user/Auth/register/user`,
+        formData
+      );
 
-      if (userRegister.fulfilled.match(result)) {
-        setFormData({
-          name: '',
-          email: '',
-          password: '',
-          phone_number: ''
-        });
+      setMessage(resp.data.message);
+      setError('');
 
-        setValidationErrors({});
-      }
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        phone_number: ''
+      });
+
+      setValidationErrors({});
     } catch (err) {
       console.error('Registration failed:', err);
+
+      const payload = err.response?.data || err.message;
+      setError(payload?.message || err.message);
+    } finally {
+      setLoading(false);
     }
   };
 

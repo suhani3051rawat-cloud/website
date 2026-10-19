@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
@@ -13,6 +14,8 @@ function UserLogin({ onClose }) {
   });
   const [validationErrors, setValidationErrors] = useState({});
   const [loginError, setLoginError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleClose = () => {
     if (typeof onClose === 'function') {
@@ -47,7 +50,7 @@ function UserLogin({ onClose }) {
     setLoginError('');
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const errors = validateForm(formData, 'login');
@@ -58,7 +61,35 @@ function UserLogin({ onClose }) {
       return;
     }
 
-    setLoginError('Login API abhi connect nahi hai.');
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const resp = await axios.post(
+        `http://localhost:5000/user/Auth/login/user`,
+        formData,
+        {
+          withCredentials: true
+        }
+      );
+
+      setMessage(resp.data.message);
+      setLoginError('');
+
+      setFormData({
+        email: '',
+        password: ''
+      });
+
+      setValidationErrors({});
+    } catch (err) {
+      console.error('Login failed:', err);
+
+      const payload = err.response?.data || err.message;
+      setLoginError(payload?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -126,9 +157,17 @@ function UserLogin({ onClose }) {
               )}
             </div>
 
-            <button className="auth-submit" type="submit">
-              Login
+            <button
+              className="auth-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Login'}
             </button>
+
+            {message && (
+              <p className="auth-success">{message}</p>
+            )}
 
             {loginError && (
               <p className="auth-error">{loginError}</p>
