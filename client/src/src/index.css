@@ -9,7 +9,7 @@
   --primary-color   : #556B2F;
   --secondary-color : #FFBF00;
   --border-color    : #D3D3D3;
-  --main-width      : 97%; 
+  --main-width      : 98%; 
 }
 .app-layout {
     display         : flex;

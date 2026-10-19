@@ -297,7 +297,7 @@
 
 @media (min-width: 1600px) {
   .navBar-content {
-    padding: 16px 44px;
+    padding: 16px 20px;
     gap: 30px;
   }
 
@@ -594,11 +594,12 @@
   .btn > span {
     font-size: 12px;
   }
+  
 }
 
 @media (max-width: 350px) {
   .btn > span {
-    gap: 4px;
+    gap: 6px;
     font-size: 11px;
   }
 }
