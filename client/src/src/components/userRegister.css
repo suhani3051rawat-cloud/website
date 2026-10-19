@@ -1,4 +1,3 @@
-
 .auth-overlay {
   position: fixed;
   inset: 0;
@@ -84,7 +83,7 @@
 .auth-content h2 {
   margin: 0;
   color: #245b32;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.3;
   text-align: center;
@@ -93,9 +92,9 @@
 .auth-title {
   margin: 10px 0 24px;
   color: #707770;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.6;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
   text-align: center;
 }
 
@@ -109,7 +108,7 @@
   display: block;
   margin-bottom: 7px;
   color: #252925;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -126,7 +125,7 @@
   background: #ffffff;
   color: #222222;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 17px;
   box-sizing: border-box;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -152,7 +151,7 @@
   background: #278443;
   color: #ffffff;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1.4;
   cursor: pointer;
@@ -180,7 +179,7 @@
   gap: 5px;
   margin: 20px 0 0;
   color: #666666;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
   text-align: center;
 }

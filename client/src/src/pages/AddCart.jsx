@@ -5,6 +5,8 @@ import {
     useSelector
 } from "react-redux";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     increaseQuantity,
     decreaseQuantity,
@@ -14,13 +16,35 @@ import {
 
 import "../components/addCart.css";
 
+const hasStoredLogin = () => {
+    try {
+        return Boolean(
+            localStorage.getItem("token") ||
+            localStorage.getItem("user")
+        );
+    } catch (error) {
+        return false;
+    }
+};
+
 function AddCart({ closeCart }) {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const cartItems = useSelector(
         state => state.cart.items
     );
+
+    const authUser = useSelector(
+        state =>
+            state.auth?.user ||
+            state.auth?.token ||
+            state.user?.currentUser ||
+            null
+    );
+
+    const isLoggedIn = Boolean(authUser) || hasStoredLogin();
 
     // Total items
     const totalItems = cartItems.reduce(
@@ -34,6 +58,71 @@ function AddCart({ closeCart }) {
             total + item.price * item.quantity,
         0
     );
+
+    const goTo = (path) => {
+        closeCart();
+        navigate(path);
+    };
+
+    if (!isLoggedIn) {
+        return (
+            <div
+                className="auth-popup-backdrop"
+                onClick={closeCart}
+            >
+
+                <div
+                    className="auth-popup"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="auth-popup-title"
+                    onClick={(e) => e.stopPropagation()}
+                >
+
+                    <button
+                        className="auth-popup-close"
+                        onClick={closeCart}
+                        aria-label="Close"
+                    >
+                        ×
+                    </button>
+
+                    <div className="auth-popup-icon">
+                        🛒
+                    </div>
+
+                    <h2 id="auth-popup-title">
+                        Login to open your cart
+                    </h2>
+
+                    <p>
+                        Please login or create an account
+                        to view your cart and place orders.
+                    </p>
+
+                    <div className="auth-popup-actions">
+
+                        <button
+                            className="auth-popup-primary"
+                            onClick={() => goTo("/login")}
+                        >
+                            Login
+                        </button>
+
+                        <button
+                            className="auth-popup-secondary"
+                            onClick={() => goTo("/register")}
+                        >
+                            Create Account
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+        );
+    }
 
     return (
         <>

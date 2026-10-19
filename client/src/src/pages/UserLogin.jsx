@@ -1,88 +1,150 @@
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
+import { validateForm } from '../utils/validation.js';
 
-function UserLogin() {
+function UserLogin({ onClose }) {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [validationErrors, setValidationErrors] = useState({});
+  const [loginError, setLoginError] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleClose = () => {
+    if (typeof onClose === 'function') {
+      onClose();
+    } else {
+      navigate('/');
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
-    alert('Login API abhi connect nahi hai.');
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value
+    }));
+
+    setValidationErrors((previous) => ({
+      ...previous,
+      [name]: ''
+    }));
+
+    setLoginError('');
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const errors = validateForm(formData, 'login');
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setLoginError('');
+      return;
+    }
+
+    setLoginError('Login API abhi connect nahi hai.');
   };
 
   return (
-    <div className="main-container">
-      <div className="userRegisterForm">
-        <img src={website_Logo} alt="farmEra logo" />
-        <h3>farmEra</h3>
+    <div className="auth-overlay">
+      <div
+        className="auth-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Login"
+      >
+        <button
+          type="button"
+          className="auth-back"
+          onClick={handleClose}
+          aria-label="Close form"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-        <p className="title">
-          Login to your farmEra account
-        </p>
+        <div className="auth-content">
+          <img
+            className="auth-logo"
+            src={website_Logo}
+            alt="farmEra logo"
+          />
 
-        <form onSubmit={handleSubmit}>
-          <div className="field">
-            <label className="label" htmlFor="login-email">
-              Email
-            </label>
-            <input
-              id="login-email"
-              className="input"
-              type="email"
-              name="email"
-              value={formData.email}
-              placeholder="name@example.com"
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <h2>farmEra</h2>
 
-          <div className="field">
-            <label className="label" htmlFor="login-password">
-              Password
-            </label>
-            <input
-              id="login-password"
-              className="input"
-              type="password"
-              name="password"
-              value={formData.password}
-              placeholder="Enter your password"
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <button type="submit" className="button">
-            Login
-          </button>
-
-          <p className="footerText">
-            Don't have an account?
-            <button
-              type="button"
-              className="link"
-              onClick={() => navigate('/register')}
-            >
-              Register
-            </button>
+          <p className="auth-title">
+            Welcome back to your farmEra account
           </p>
-        </form>
+
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="auth-field">
+              <label htmlFor="auth-login-email">Email</label>
+              <input
+                id="auth-login-email"
+                type="email"
+                name="email"
+                placeholder="name@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                autoComplete="email"
+              />
+              {validationErrors.email && (
+                <p className="auth-error">{validationErrors.email}</p>
+              )}
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="auth-login-password">Password</label>
+              <input
+                id="auth-login-password"
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                autoComplete="current-password"
+              />
+              {validationErrors.password && (
+                <p className="auth-error">{validationErrors.password}</p>
+              )}
+            </div>
+
+            <button className="auth-submit" type="submit">
+              Login
+            </button>
+
+            {loginError && (
+              <p className="auth-error">{loginError}</p>
+            )}
+
+            <p className="auth-switch">
+              Don't have an account?
+              <button
+                type="button"
+                onClick={() => navigate('/register')}
+              >
+                Register
+              </button>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

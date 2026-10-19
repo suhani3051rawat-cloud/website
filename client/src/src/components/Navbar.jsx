@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -10,12 +9,10 @@ import cart from '../assets/cart.svg';
 import { searchProducts } from '../store/searchProducts.js';
 import Location from '../pages/Location.jsx';
 import AddToCart from '../pages/AddCart.jsx';
-import UserRegister from '../pages/UserRegister.jsx';
 
 function Navbar() {
   const [search, setSearch] = useState('');
   const [cartOpen, setCartOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,7 +51,7 @@ function Navbar() {
             </div>
 
             <div className="brand-name">
-              <h3>farmEra</h3>
+                farm<span>Era</span>
               <p>fresh from Nature</p>
             </div>
           </div>
@@ -81,7 +78,7 @@ function Navbar() {
           <button
             type="button"
             className="user"
-            onClick={() => setAuthOpen(true)}
+            onClick={() => navigate('/register')}
             aria-label="Open account"
           >
             <img src={user} alt="User account" />
@@ -113,10 +110,6 @@ function Navbar() {
 
       {cartOpen && (
         <AddToCart closeCart={() => setCartOpen(false)} />
-      )}
-
-      {authOpen && (
-        <UserRegister onClose={() => setAuthOpen(false)} />
       )}
     </>
   );

@@ -1,9 +1,9 @@
-.image{
-    width               : var(--main-width);
-    height              : 200px;
-    border              :2px solid var(--border-color);
-    background-image    : url("/hero.jpeg"),url("/her.jpeg");
-    background-size     : 50% 100%, 50% 100%;
-    background-position : left top , right top;
-    background-repeat   : no-repeat;
+.image {
+    width: var(--main-width);
+    height: 200px;
+    border: 2px solid var(--border-color);
+    background-image: url("/bag.jpg"), url("/milkfarm.jpg"), url("/her.jpg");
+    background-size: 30% 100%, 40% 100%, 31% 100%;
+    background-position: left top, center top, right top;
+    background-repeat: no-repeat;
 }
