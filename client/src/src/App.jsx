@@ -1,17 +1,19 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import AppRoutes from './routes/AppRoutes';
-import UserRegister from './pages/UserRegister.jsx';
+import Footer from './pages/Footer';
 
 function App() {
   return (
-   <>
-      <Navbar/>
-      <HeroSection/>
-      <AppRoutes/>
-   </>
-  )
+    <BrowserRouter>
+      <Navbar />
+      <HeroSection />
+      <AppRoutes />
+      <Footer />
+    </BrowserRouter>
+  );
 }
 
 export default App;

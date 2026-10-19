@@ -1,77 +1,309 @@
-import React from 'react'
-import website_Logo      from '../assets/logo.svg';
+
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
-import { useState } from 'react';
-import  {validateForm} from '../utils/validation.js';
-import { useSelector,useDispatch } from 'react-redux';
+import { validateForm } from '../utils/validation.js';
 import { userRegister } from '../store/RegisterUserSlice.js';
 
-function UserRegister() {
-    let dispatch = useDispatch();
-   const { loading, message, error } = useSelector(
-    (state) => state.userRegister);
-    console.log(error);
-    console.log(message);
-   let [formData , setFormData] = useState({
-                                  name :"",
-                                  email :"",
-                                  password :"",
-                                  phone_number :"", 
+function UserRegister({ onClose }) {
+  const [mode, setMode] = useState('register');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone_number: ''
   });
- console.log(formData);
-  let fromSubmit = async (e)=>{
-    e.preventDefault(); 
-     const validationErrors = validateForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-        return;
+  const [validationErrors, setValidationErrors] = useState({});
+  const [loginError, setLoginError] = useState('');
+
+  const dispatch = useDispatch();
+
+  const { loading, message, error } = useSelector(
+    (state) => state.userRegister
+  );
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value
+    }));
+
+    setValidationErrors((previous) => ({
+      ...previous,
+      [name]: ''
+    }));
+
+    setLoginError('');
+  };
+
+  const handleRegister = async (event) => {
+    event.preventDefault();
+
+    const errors = validateForm(formData, 'register');
+    setValidationErrors(errors);
+    setLoginError('');
+
+    if (Object.keys(errors).length > 0) {
+      return;
     }
-     dispatch(userRegister(formData));
-     alert("form submitted successfully");
+
+    try {
+      const result = await dispatch(userRegister(formData));
+
+      if (userRegister.fulfilled.match(result)) {
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          phone_number: ''
+        });
+
+        setValidationErrors({});
+      }
+    } catch (err) {
+      console.error('Registration failed:', err);
     }
-  let DataChange = (e)=>{
-     setFormData({...formData,[e.target.name] : e.target.value});
-  }
+  };
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    const errors = validateForm(formData, 'login');
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setLoginError('');
+      return;
+    }
+
+    setLoginError('Login API abhi connect nahi hai.');
+  };
+
+  const switchMode = (nextMode) => {
+    setMode(nextMode);
+    setValidationErrors({});
+    setLoginError('');
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      phone_number: ''
+    });
+  };
+
+  const registerError =
+    typeof error === 'string'
+      ? error
+      : error?.message || '';
+
   return (
-   <>
-   <div className='main-container'>
-        <div className='userRegisterForm'>
-            <img src={website_Logo} />
-            <h3>farmEra</h3>
-            <p className='title'>join farm era for fresh grocery at your Door step</p>
-            <form onSubmit={fromSubmit}>
-              <div className="field">
-              <label className="label">Full name</label>
-              <input className="input" type="text" name="name" value={formData.name} placeholder="Your name" onChange={DataChange} required/>
-              { error.name && <p className="error">{ error.name}</p>}
-            </div>
+    <div className="auth-overlay">
+      <div
+        className="auth-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={mode === 'register' ? 'Register' : 'Login'}
+      >
+        <button
+          type="button"
+          className="auth-back"
+          onClick={onClose}
+          aria-label="Close form"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-            <div className="field">
-              <label className="label">Email</label>
-              <input className="input" type="email" name="email" value={formData.email} placeholder="name@example.com" onChange={DataChange} required />
-              { error.email && <p className="error">{ error.email}</p>}            
-            </div>
+        <div className="auth-content">
+          <img
+            className="auth-logo"
+            src={website_Logo}
+            alt="farmEra logo"
+          />
 
-            <div className="field">
-              <label className="label">Password</label>
-              <input className="input" type="password" name="password" value={formData.password} placeholder="At least 6 characters"  onChange={DataChange} required/>
-              { error.name && <p className="error">{ error.password}</p>}           
-            </div>
+          <h2>farmEra</h2>
 
-            <div className="field">
-              <label className="label">Phone number</label>
-              <input className="input" type="tel" name="phone_number" value={formData.phone_number} placeholder="10-digit mobile number" maxLength={10} onChange={DataChange} required />
-               { error.name && <p className="error">{ error.phone_number}</p>}
-            </div>
+          <p className="auth-title">
+            {mode === 'register'
+              ? 'Create your account and get fresh groceries at your doorstep'
+              : 'Welcome back to your farmEra account'}
+          </p>
 
-               <button type="submit" className="button">Register</button>
-               <p className="footerText">
-                Already have an account? <span className="link">Log in</span>
+          {mode === 'register' ? (
+            <form onSubmit={handleRegister} noValidate>
+              <div className="auth-field">
+                <label htmlFor="auth-name">Full name</label>
+                <input
+                  id="auth-name"
+                  type="text"
+                  name="name"
+                  placeholder="Enter your full name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  autoComplete="name"
+                />
+                {validationErrors.name && (
+                  <p className="auth-error">{validationErrors.name}</p>
+                )}
+              </div>
+
+              <div className="auth-field">
+                <label htmlFor="auth-register-email">Email</label>
+                <input
+                  id="auth-register-email"
+                  type="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  autoComplete="email"
+                />
+                {validationErrors.email && (
+                  <p className="auth-error">{validationErrors.email}</p>
+                )}
+              </div>
+
+              <div className="auth-field">
+                <label htmlFor="auth-register-password">Password</label>
+                <input
+                  id="auth-register-password"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                />
+                {validationErrors.password && (
+                  <p className="auth-error">{validationErrors.password}</p>
+                )}
+              </div>
+
+              <div className="auth-field">
+                <label htmlFor="auth-phone">Phone number</label>
+                <input
+                  id="auth-phone"
+                  type="tel"
+                  name="phone_number"
+                  placeholder="Enter your phone number"
+                  value={formData.phone_number}
+                  onChange={handleChange}
+                  maxLength={10}
+                  inputMode="numeric"
+                  autoComplete="tel"
+                />
+                {validationErrors.phone_number && (
+                  <p className="auth-error">
+                    {validationErrors.phone_number}
+                  </p>
+                )}
+              </div>
+
+              <button
+                className="auth-submit"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Registering...' : 'Create Account'}
+              </button>
+
+              {typeof message === 'string' && message && (
+                <p className="auth-success">{message}</p>
+              )}
+
+              {registerError && (
+                <p className="auth-error">{registerError}</p>
+              )}
+
+              <p className="auth-switch">
+                Already have an account?
+                <button
+                  type="button"
+                  onClick={() => switchMode('login')}
+                >
+                  Login
+                </button>
               </p>
             </form>
+          ) : (
+            <form onSubmit={handleLogin} noValidate>
+              <div className="auth-field">
+                <label htmlFor="auth-login-email">Email</label>
+                <input
+                  id="auth-login-email"
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  autoComplete="email"
+                />
+                {validationErrors.email && (
+                  <p className="auth-error">{validationErrors.email}</p>
+                )}
+              </div>
+
+              <div className="auth-field">
+                <label htmlFor="auth-login-password">Password</label>
+                <input
+                  id="auth-login-password"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  autoComplete="current-password"
+                />
+                {validationErrors.password && (
+                  <p className="auth-error">{validationErrors.password}</p>
+                )}
+              </div>
+
+              <button className="auth-submit" type="submit">
+                Login
+              </button>
+
+              {loginError && (
+                <p className="auth-error">{loginError}</p>
+              )}
+
+              <p className="auth-switch">
+                Don't have an account?
+                <button
+                  type="button"
+                  onClick={() => switchMode('register')}
+                >
+                  Register
+                </button>
+              </p>
+            </form>
+          )}
         </div>
-   </div>
-   </>
-  )
+      </div>
+    </div>
+  );
 }
 
-export default UserRegister
+export default UserRegister;
