@@ -1,3 +1,4 @@
+
 .app-layout {
   width: 100%;
   max-width: 100%;
@@ -14,14 +15,13 @@
   box-sizing: border-box;
 }
 
-
 .app-layout > nav {
   position: sticky;
   top: 0;
   flex: 0 0 120px;
   width: 120px;
-  height: 100vh;
-  height: 90vh;
+  height: 93vh;
+  height: 93dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,17 +32,11 @@
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  scrollbar-color: #bdc9aa transparent;
-  margin-bottom: 5px;
+  margin: 0;
 }
 
 .app-layout > nav::-webkit-scrollbar {
-  width: 5px;
-}
-
-.app-layout > nav::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: #bdc9aa;
+  display: none;
 }
 
 .app-layout > nav a {
@@ -65,7 +59,8 @@
 
 .app-layout > nav img {
   display: block;
-  width: 110px;
+  width: 100%;
+  max-width: 110px;
   height: 100px;
   object-fit: cover;
   transition: box-shadow 0.3s ease;
@@ -83,8 +78,8 @@
   flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
-  height: 90vh;
   height: 93vh;
+  height: 93dvh;
   padding: 8px 0 0;
   margin: 0;
   box-sizing: border-box;
@@ -98,7 +93,7 @@
   }
 
   .app-layout > nav img {
-    width: 88px;
+    max-width: 110px;
     height: 88px;
   }
 
@@ -112,10 +107,11 @@
     flex-basis: 104px;
     width: 104px;
     gap: 14px;
+    padding: 12px 6px;
   }
 
   .app-layout > nav img {
-    width: 64px;
+    max-width: 64px;
     height: 64px;
   }
 
@@ -126,28 +122,27 @@
 
 @media (max-width: 760px) {
   .app-layout {
-    gap: 4px;
+    gap: 0;
   }
 
   .app-layout > nav {
-    top: 8px;
-    flex-basis: 84px;
+    position: sticky;
+    top: 0;
+    flex: 0 0 84px;
     width: 84px;
-    max-height: calc(100vh - 16px);
-    max-height: calc(100dvh - 16px);
+    height: 93vh;
+    height: 93dvh;
+    max-height: 93vh;
+    max-height: 93dvh;
     gap: 12px;
     padding: 10px 4px 14px;
     scrollbar-width: none;
   }
 
-  .app-layout > nav::-webkit-scrollbar {
-    display: none;
-  }
-
   .app-layout > nav img {
-    width: 54px;
+    width: 100%;
+    max-width: 54px;
     height: 54px;
-    box-shadow: 0 0 0 2px #f3c94d, 0 6px 14px rgba(32, 63, 39, 0.16);
   }
 
   .app-layout > nav p {
@@ -156,7 +151,11 @@
   }
 
   .route-content {
-    padding: 6px 6px 20px 0;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 93vh;
+    height: 93dvh;
+    padding: 6px 0 20px;
   }
 }
 
@@ -165,11 +164,11 @@
     flex-basis: 72px;
     width: 72px;
     gap: 10px;
-    padding: 8px 2px 12px;
+    padding: 8px 3px 12px;
   }
 
   .app-layout > nav img {
-    width: 46px;
+    max-width: 46px;
     height: 46px;
   }
 
@@ -178,7 +177,7 @@
   }
 
   .route-content {
-    padding: 4px 4px 18px 0;
+    padding: 4px 0 18px;
   }
 }
 
@@ -187,10 +186,11 @@
     flex-basis: 62px;
     width: 62px;
     gap: 8px;
+    padding: 8px 2px 10px;
   }
 
   .app-layout > nav img {
-    width: 40px;
+    max-width: 40px;
     height: 40px;
   }
 
@@ -199,17 +199,23 @@
   }
 
   .route-content {
-    padding-right: 2px;
+    padding-right: 0;
   }
 }
 
 @media (max-height: 480px) and (orientation: landscape) {
+  .app-layout > nav,
+  .route-content {
+    height: 93vh;
+    height: 93dvh;
+  }
+
   .app-layout > nav {
     gap: 8px;
   }
 
   .app-layout > nav img {
-    width: 42px;
+    max-width: 42px;
     height: 42px;
   }
 
