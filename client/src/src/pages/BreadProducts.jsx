@@ -1,7 +1,7 @@
 import { products } from "../store/productSlice";
 import { searchProducts } from "../store/searchProducts.js";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {addToCart} from "../store/cartSlice.js";
 import React from 'react'
 
@@ -16,17 +16,45 @@ function BreadProducts() {
     products: searchProductList = [],
   } = useSelector((state) => state.searchProducts);
   let dispatch  = useDispatch(); 
-  useEffect(()=>{
-      if(search) {
-        dispatch(searchProducts(search));
-      }
-      else{
-          dispatch(products("Bread"));
-      }
-  },[search, dispatch]);
-  if(loading){
-    <h3>Loading.....</h3>
-  }
+  const lastRequest = useRef("");
+
+useEffect(() => {
+  const query = (search || "").trim();
+  const requestKey = query ? `search:${query}` : "category:Bread";
+
+  if (lastRequest.current === requestKey) return;
+
+  const timer = setTimeout(() => {
+    lastRequest.current = requestKey;
+    if (query) {
+      dispatch(searchProducts(query));
+    } else {
+      dispatch(products("Bread"));
+    }
+  }, 350);
+
+  return () => clearTimeout(timer);
+}, [search, dispatch]);
+useEffect(()=>{
+    if(search) {
+      dispatch(searchProducts(search));
+    }
+    else {
+    dispatch(products("Bread"));
+    }
+},[search, dispatch]);
+if (loading && !search && productList.length === 0) {
+  return <h3>Loading.....</h3>;
+}
+
+if (search && searchProductList.length === 0) {
+  return (
+    <div style={{ width: "100%", padding: "60px 20px", textAlign: "center" }}>
+      <h3>No products found</h3>
+      <p>Try another name.</p>
+    </div>
+  );
+}
   if (error) {
         return <h2>{error}</h2>;
   }
