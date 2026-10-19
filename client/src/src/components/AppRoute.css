@@ -3,8 +3,8 @@
   max-width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: stretch;
+  gap: 0;
   box-sizing: border-box;
 }
 
@@ -14,12 +14,14 @@
   box-sizing: border-box;
 }
 
+
 .app-layout > nav {
   position: sticky;
-  top: 12px;
+  top: 0;
   flex: 0 0 120px;
   width: 120px;
-  height:95%;
+  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,10 +31,9 @@
   overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width:none;
+  scrollbar-width: none;
   scrollbar-color: #bdc9aa transparent;
-  margin-bottom:5px;
-  
+  margin-bottom: 5px;
 }
 
 .app-layout > nav::-webkit-scrollbar {
@@ -82,7 +83,11 @@
   flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
-  padding: 8px 0 24px 0;
+  height: 90vh;
+  height: 93vh;
+  padding: 8px 0 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1600px) {
