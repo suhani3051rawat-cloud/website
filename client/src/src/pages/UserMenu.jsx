@@ -164,16 +164,18 @@ function UserMenu({ iconSrc }) {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            await logout();
-            clearSelectedAddress();
-            setOpen(false);
-            navigate("/");
-        } catch (err) {
-            console.error("Logout failed:", err);
-        }
-    };
+
+const handleLogout = async () => {
+  try {
+    await logout();
+    clearSelectedAddress();
+    setOpen(false);
+    navigate("/");
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
+
 
     return (
         <div className="user-menu" ref={menuRef}>

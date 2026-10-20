@@ -1,38 +1,32 @@
 
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import './Navbar.css';
-
-import website_Logo from '../assets/logo.svg';
-import search_icon from '../assets/search.svg';
-import userIcon from '../assets/user.svg';
-import cart from '../assets/cart.svg';
-
-import {
-  setSearch,
-  clearSearch,
-} from '../store/searchProducts.js';
-
-import Location from '../pages/Location.jsx';
-import AddToCart from '../pages/AddCart.jsx';
-import UserMenu from '../pages/UserMenu.jsx';
-import { useAuth } from '../pages/AuthContext.jsx';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import "./Navbar.css";
+import website_Logo from "../assets/logo.svg";
+import search_icon from "../assets/search.svg";
+import userIcon from "../assets/user.svg";
+import cart from "../assets/cart.svg";
+import { setSearch, clearSearch } from "../store/searchProducts.js";
+import Location from "../pages/Location.jsx";
+import AddToCart from "../pages/AddCart.jsx";
+import UserMenu from "../pages/UserMenu.jsx";
+import { useAuth } from "../pages/AuthContext.jsx";
 
 function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { user, loading } = useAuth();
 
-  // Search value Redux se aayegi
-  const search = useSelector(
-    (state) => state.searchProducts.search
+  const cartItems = useSelector(
+    (state) => state.cart?.items || []
   );
 
-  const cartItems = useSelector(
-    (state) => state.cart.items || []
+  const search = useSelector(
+    (state) => state.searchProducts?.search || ""
   );
 
   const cartCount = cartItems.reduce(
@@ -40,30 +34,48 @@ function Navbar() {
     0
   );
 
-  // Search input change
-  const handleSearch = (e) => {
-    dispatch(setSearch(e.target.value));
+  useEffect(() => {
+    if (!user || loading) {
+      setCartOpen(false);
+    }
+  }, [user, loading]);
+
+  const handleSearch = (event) => {
+    dispatch(setSearch(event.target.value));
   };
 
-  // Logo click karne par search clear
   const handleHome = () => {
     dispatch(clearSearch());
-    navigate('/');
+    navigate("/");
+  };
+
+  const handleCartClick = () => {
+    if (loading) return;
+
+    if (!user) {
+      setCartOpen(false);
+      navigate("/login");
+      return;
+    }
+
+    setCartOpen((previous) => !previous);
   };
 
   return (
     <>
       <div className="navBar">
         <div className="navBar-content">
-
           <div
             className="website-logo"
             onClick={handleHome}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
+            onKeyDown={(event) => {
+              if (
+                event.key === "Enter" ||
+                event.key === " "
+              ) {
+                event.preventDefault();
                 handleHome();
               }
             }}
@@ -107,32 +119,32 @@ function Navbar() {
             )}
           </div>
 
-          {!loading && (
-            user ? (
+          {!loading &&
+            (user ? (
               <UserMenu iconSrc={userIcon} />
             ) : (
               <button
                 type="button"
                 className="user"
-                onClick={() => navigate('/register')}
-                aria-label="Open account"
+                onClick={() => navigate("/login")}
+                aria-label="Login"
               >
                 <img src={userIcon} alt="User account" />
               </button>
-            )
-          )}
+            ))}
 
           <div>
             <button
               type="button"
               className="btn"
-              onClick={() => setCartOpen(true)}
+              onClick={handleCartClick}
+              disabled={loading}
               aria-label="Open shopping cart"
             >
               <img
                 src={cart}
                 alt="Cart"
-                style={{ height: '28px' }}
+                style={{ height: "28px" }}
               />
 
               <span>
@@ -145,12 +157,13 @@ function Navbar() {
               </span>
             </button>
           </div>
-
         </div>
       </div>
 
-      {cartOpen && (
-        <AddToCart closeCart={() => setCartOpen(false)} />
+      {cartOpen && user && !loading && (
+        <AddToCart
+          closeCart={() => setCartOpen(false)}
+        />
       )}
     </>
   );

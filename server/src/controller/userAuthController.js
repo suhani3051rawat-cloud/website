@@ -89,22 +89,26 @@ export const userLogin = async (req,res)=>{
         });
     }
 }
-export const userLogOut = async (req,res)=>{
-    try {
-        await res.clearCookie("token",{
-        httpOnly : true,
-        secure   : false,
-       }); 
-       res.json({
-        message : " user logout"
-       }); 
-    } catch (error) {
-       return res.json({
-        message : "user is not logged in",
-        error   : error
-       }); 
-    }
-}
+
+export const userLogout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Logout failed",
+    });
+  }
+};
+
 
 export const getCurrentUser = async (req, res) => {
   try {
