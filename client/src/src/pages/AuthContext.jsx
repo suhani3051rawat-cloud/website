@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { userApi } from '../api/axios.js';
 
 const API = "http://localhost:5000/user/Auth";
 const AuthContext = createContext(null);
@@ -10,9 +11,7 @@ export function AuthProvider({ children }) {
 
     const fetchUser = useCallback(async () => {
         try {
-            const resp = await axios.get(`${API}/getCurrent/user`, {
-                withCredentials: true
-            });
+        const resp = await userApi.get('/getCurrent/user');
             const data = resp.data?.user;
             const current = Array.isArray(data) ? data[0] : data;
             setUser(current || null);

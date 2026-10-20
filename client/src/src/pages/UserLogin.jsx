@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
 import { validateForm } from '../utils/validation.js';
-import { useAuth } from './AuthContext.jsx';
+import { useAuth } from '../pages/AuthContext.jsx';
+import { userApi } from '../api/axios.js';
 
 function UserLogin({ onClose }) {
   const navigate = useNavigate();
@@ -12,8 +12,9 @@ function UserLogin({ onClose }) {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
+
   const [validationErrors, setValidationErrors] = useState({});
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,57 +42,57 @@ function UserLogin({ onClose }) {
 
     setFormData((previous) => ({
       ...previous,
-      [name]: value
+      [name]: value,
     }));
 
     setValidationErrors((previous) => ({
       ...previous,
-      [name]: ''
+      [name]: '',
     }));
 
     setLoginError('');
+    setMessage('');
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    setMessage('');
+    setLoginError('');
+
     const errors = validateForm(formData, 'login');
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      setLoginError('');
       return;
     }
 
     setLoading(true);
-    setMessage('');
 
     try {
-      const resp = await axios.post(
-        `http://localhost:5000/user/Auth/login/user`,
-        formData,
-        {
-          withCredentials: true
-        }
-      );
+      const resp = await userApi.post('/login/user', formData);
 
-      setMessage(resp.data.message);
-      setLoginError('');
+      setMessage(resp.data.message || 'Login successful!');
 
       setFormData({
         email: '',
-        password: ''
+        password: '',
       });
 
       setValidationErrors({});
 
       await fetchUser();
+
       navigate('/', { replace: true });
     } catch (err) {
       console.error('Login failed:', err);
 
-      const payload = err.response?.data || err.message;
-      setLoginError(payload?.message || err.message);
+      setLoginError(
+        err.response?.data?.message ||
+        (err.response
+          ? 'Login failed. Please check your email and password.'
+          : 'Network Error: Unable to connect to the server.')
+      );
     } finally {
       setLoading(false);
     }
@@ -141,8 +142,11 @@ function UserLogin({ onClose }) {
                 onChange={handleChange}
                 autoComplete="email"
               />
+
               {validationErrors.email && (
-                <p className="auth-error">{validationErrors.email}</p>
+                <p className="auth-error">
+                  {validationErrors.email}
+                </p>
               )}
             </div>
 
@@ -157,8 +161,11 @@ function UserLogin({ onClose }) {
                 onChange={handleChange}
                 autoComplete="current-password"
               />
+
               {validationErrors.password && (
-                <p className="auth-error">{validationErrors.password}</p>
+                <p className="auth-error">
+                  {validationErrors.password}
+                </p>
               )}
             </div>
 

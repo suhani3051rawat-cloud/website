@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
 import { validateForm } from '../utils/validation.js';
+import { userApi } from '../api/axios.js';
 
 function UserRegister({ onClose }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    phone_number: ''
+    phone_number: '',
   });
+
   const [validationErrors, setValidationErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -41,58 +42,54 @@ function UserRegister({ onClose }) {
 
     setFormData((previous) => ({
       ...previous,
-      [name]: value
+      [name]: value,
     }));
 
     setValidationErrors((previous) => ({
       ...previous,
-      [name]: ''
+      [name]: '',
     }));
   };
 
   const handleRegister = async (event) => {
     event.preventDefault();
 
+    setMessage('');
+    setError('');
+
     const errors = validateForm(formData, 'register');
     setValidationErrors(errors);
 
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
+    if (Object.keys(errors).length > 0) return;
 
     setLoading(true);
 
     try {
-      const resp = await axios.post(
-        `http://localhost:5000/user/Auth/register/user`,
-        formData
-      );
+      const resp = await userApi.post('/register/user', formData);
 
-      setMessage(resp.data.message);
-      setError('');
+      setMessage(resp.data.message || 'Registration successful!');
 
       setFormData({
         name: '',
         email: '',
         password: '',
-        phone_number: ''
+        phone_number: '',
       });
 
       setValidationErrors({});
     } catch (err) {
       console.error('Registration failed:', err);
 
-      const payload = err.response?.data || err.message;
-      setError(payload?.message || err.message);
+      setError(
+        err.response?.data?.message ||
+        (err.response
+          ? 'Registration failed. Please check your details.'
+          : 'Network Error: Unable to connect to the server.')
+      );
     } finally {
       setLoading(false);
     }
   };
-
-  const registerError =
-    typeof error === 'string'
-      ? error
-      : error?.message || '';
 
   return (
     <div className="auth-overlay">
@@ -114,11 +111,7 @@ function UserRegister({ onClose }) {
         </button>
 
         <div className="auth-content">
-          <img
-            className="auth-logo"
-            src={website_Logo}
-            alt="farmEra logo"
-          />
+          <img className="auth-logo" src={website_Logo} alt="farmEra logo" />
 
           <h2>farmEra</h2>
 
@@ -195,28 +188,16 @@ function UserRegister({ onClose }) {
               )}
             </div>
 
-            <button
-              className="auth-submit"
-              type="submit"
-              disabled={loading}
-            >
+            <button className="auth-submit" type="submit" disabled={loading}>
               {loading ? 'Registering...' : 'Create Account'}
             </button>
 
-            {typeof message === 'string' && message && (
-              <p className="auth-success">{message}</p>
-            )}
-
-            {registerError && (
-              <p className="auth-error">{registerError}</p>
-            )}
+            {message && <p className="auth-success">{message}</p>}
+            {error && <p className="auth-error">{error}</p>}
 
             <p className="auth-switch">
               Already have an account?
-              <button
-                type="button"
-                onClick={() => navigate('/login')}
-              >
+              <button type="button" onClick={() => navigate('/login')}>
                 Login
               </button>
             </p>

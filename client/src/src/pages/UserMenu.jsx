@@ -1,16 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../pages/AuthContext.jsx";
 import { useAddress } from "../pages/AddressContext.jsx";
-import "../components/userMenu.css";
-
-const API = "http://localhost:5000/user/Auth";
+import { userApi } from "../axios/api.js";
+import "../pages/userMenu.css";
 
 function UserMenu({ iconSrc }) {
     const { user, fetchUser, logout } = useAuth();
-    const { selectedAddress, selectAddress, clearSelectedAddress } = useAddress();
-    const navigate = useNavigate();
+    const {
+        selectedAddress,
+        selectAddress,
+        clearSelectedAddress
+    } = useAddress();
+
+    const navigate = useNavigate();             
     const menuRef = useRef(null);
 
     const [open, setOpen] = useState(false);
@@ -18,6 +21,7 @@ function UserMenu({ iconSrc }) {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [deleteError, setDeleteError] = useState("");
+
     const [form, setForm] = useState({
         addr1: "",
         addr2: "",
@@ -26,12 +30,19 @@ function UserMenu({ iconSrc }) {
 
     useEffect(() => {
         const handleOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
+            if (
+                menuRef.current &&
+                !menuRef.current.contains(event.target)
+            ) {
                 setOpen(false);
             }
         };
+
         document.addEventListener("mousedown", handleOutside);
-        return () => document.removeEventListener("mousedown", handleOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutside);
+        };
     }, []);
 
     const addresses = (user?.Address || [])
@@ -46,17 +57,22 @@ function UserMenu({ iconSrc }) {
             navigate("/login");
             return;
         }
+
         setOpen((previous) => !previous);
     };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setForm((previous) => ({ ...previous, [name]: value }));
+
+        setForm((previous) => ({
+            ...previous,
+            [name]: value
+        }));
     };
 
     const handleSelectAddress = (item) => {
         if (selectedAddress?._id === item._id) {
-            clearSelectedAddress(); // dobara click = unselect, current location wapas
+            clearSelectedAddress();
         } else {
             selectAddress({
                 _id: item._id,
@@ -69,7 +85,13 @@ function UserMenu({ iconSrc }) {
 
     const handleAddAddress = async (event) => {
         event.preventDefault();
+
         if (saving) return;
+
+        if (!user?._id) {
+            setError("Please log in to add an address.");
+            return;
+        }
 
         const payload = {
             addr1: form.addr1.trim(),
@@ -86,43 +108,71 @@ function UserMenu({ iconSrc }) {
         setError("");
 
         try {
-            await axios.post(
-                `${API}/user/multiAddress/${user._id}`,
-                { address: payload },
-                { withCredentials: true }
+            await userApi.post(
+                `/user/multiAddress/${user._id}`,
+                { address: payload }
             );
+
             await fetchUser();
-            setForm({ addr1: "", addr2: "", addrType: "Home" });
+
+            setForm({
+                addr1: "",
+                addr2: "",
+                addrType: "Home"
+            });
+
             setShowForm(false);
         } catch (err) {
-            setError(err.response?.data?.message || err.message);
+            console.error("Add address failed:", err);
+
+            setError(
+                err.response?.data?.message ||
+                "Unable to save address. Please try again."
+            );
         } finally {
             setSaving(false);
         }
     };
 
     const handleDeleteAddress = async (event, addressId) => {
-        event.stopPropagation(); // card select na ho
+        event.stopPropagation();
+
         setDeleteError("");
+
+        if (!user?._id) {
+            setDeleteError("Please log in first.");
+            return;
+        }
+
         try {
-            await axios.delete(
-                `${API}/address/Delete/${user._id}/${addressId}`,
-                { withCredentials: true }
+            await userApi.delete(
+                `/address/Delete/${user._id}/${addressId}`
             );
+
             if (selectedAddress?._id === addressId) {
                 clearSelectedAddress();
             }
+
             await fetchUser();
         } catch (err) {
-            setDeleteError(err.response?.data?.message || err.message);
+            console.error("Delete address failed:", err);
+
+            setDeleteError(
+                err.response?.data?.message ||
+                "Unable to delete address. Please try again."
+            );
         }
     };
 
     const handleLogout = async () => {
-        await logout();
-        clearSelectedAddress();
-        setOpen(false);
-        navigate("/");
+        try {
+            await logout();
+            clearSelectedAddress();
+            setOpen(false);
+            navigate("/");
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
     };
 
     return (
@@ -147,7 +197,10 @@ function UserMenu({ iconSrc }) {
                         </svg>
                     )}
                 </span>
-                {firstName && <span className="user-menu-name">{firstName}</span>}
+
+                {firstName && (
+                    <span className="user-menu-name">{firstName}</span>
+                )}
             </button>
 
             {user && open && (
@@ -160,53 +213,84 @@ function UserMenu({ iconSrc }) {
 
                     <div className="user-menu-section">
                         <h5>Addresses</h5>
+
                         {addresses.length === 0 && (
-                            <p className="user-menu-empty">No address saved</p>
+                            <p className="user-menu-empty">
+                                No address saved
+                            </p>
                         )}
+
                         {addresses.map((item, index) => {
-                            const isSelected = selectedAddress?._id === item._id;
+                            const isSelected =
+                                selectedAddress?._id === item._id;
+
                             return (
                                 <div
-                                    className={`user-menu-address ${isSelected ? "selected" : ""}`}
+                                    className={`user-menu-address ${
+                                        isSelected ? "selected" : ""
+                                    }`}
                                     key={item._id || index}
                                     onClick={() => handleSelectAddress(item)}
                                     role="button"
                                     tabIndex={0}
                                     onKeyDown={(event) => {
-                                        if (event.key === "Enter") handleSelectAddress(item);
+                                        if (event.key === "Enter") {
+                                            handleSelectAddress(item);
+                                        }
                                     }}
                                     aria-pressed={isSelected}
                                 >
                                     <button
                                         type="button"
                                         className="user-menu-delete"
-                                        onClick={(event) => handleDeleteAddress(event, item._id)}
+                                        onClick={(event) =>
+                                            handleDeleteAddress(
+                                                event,
+                                                item._id
+                                            )
+                                        }
                                         aria-label="Delete address"
                                         title="Delete address"
                                     >
-                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                        >
                                             <path d="M3 6h18" />
                                             <path d="M8 6V4h8v2" />
                                             <path d="M6 6l1 14h10l1-14" />
                                             <path d="M10 11v6M14 11v6" />
                                         </svg>
                                     </button>
-                                    <span className="user-menu-type">{item.addrType}</span>
+
+                                    <span className="user-menu-type">
+                                        {item.addrType}
+                                    </span>
+
                                     {isSelected && (
-                                        <span className="user-menu-selected-tag">Selected</span>
+                                        <span className="user-menu-selected-tag">
+                                            Selected
+                                        </span>
                                     )}
+
                                     <p>{item.addr1}</p>
                                     <p>{item.addr2}</p>
                                 </div>
                             );
                         })}
+
                         {deleteError && (
-                            <p className="user-menu-error">{deleteError}</p>
+                            <p className="user-menu-error">
+                                {deleteError}
+                            </p>
                         )}
                     </div>
 
                     {showForm ? (
-                        <form className="user-menu-form" onSubmit={handleAddAddress}>
+                        <form
+                            className="user-menu-form"
+                            onSubmit={handleAddAddress}
+                        >
                             <input
                                 type="text"
                                 name="addr1"
@@ -214,6 +298,7 @@ function UserMenu({ iconSrc }) {
                                 value={form.addr1}
                                 onChange={handleChange}
                             />
+
                             <input
                                 type="text"
                                 name="addr2"
@@ -221,6 +306,7 @@ function UserMenu({ iconSrc }) {
                                 value={form.addr2}
                                 onChange={handleChange}
                             />
+
                             <select
                                 name="addrType"
                                 value={form.addrType}
@@ -230,11 +316,16 @@ function UserMenu({ iconSrc }) {
                                 <option value="Work">Work</option>
                                 <option value="Other">Other</option>
                             </select>
-                            {error && <p className="user-menu-error">{error}</p>}
+
+                            {error && (
+                                <p className="user-menu-error">{error}</p>
+                            )}
+
                             <div className="user-menu-form-actions">
                                 <button type="submit" disabled={saving}>
                                     {saving ? "Saving..." : "Save"}
                                 </button>
+
                                 <button
                                     type="button"
                                     onClick={() => {
