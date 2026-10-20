@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../pages/AuthContext.jsx";
 import { useAddress } from "../pages/AddressContext.jsx";
-import { userApi } from "../axios/api.js";
-import "../pages/userMenu.css";
+import { userApi } from "../api/axios.js";
+import "../components/userMenu.css";
 
 function UserMenu({ iconSrc }) {
     const { user, fetchUser, logout } = useAuth();
