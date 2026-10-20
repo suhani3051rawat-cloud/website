@@ -248,3 +248,132 @@
     font-size: 11px;
     font-weight: 700;
 }
+
+/* User menu container */
+.user-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* User icon and name */
+.user-menu-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Dropdown panel */
+.user-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+
+  width: 300px;
+  max-width: calc(100vw - 24px);
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 16px;
+  z-index: 10000;
+}
+
+/* User details */
+.user-menu-info {
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.user-menu-info h4 {
+  margin: 0 0 6px;
+}
+
+.user-menu-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #555;
+  overflow-wrap: anywhere;
+}
+
+/* Address layout */
+.user-menu-address {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 40px 10px 10px;
+  margin-bottom: 8px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+.user-menu-address p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.user-menu-delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+}
+
+.user-menu-delete:hover {
+  background: #fdecea;
+  color: #d93025;
+}
+
+/* Tablet and mobile */
+@media (max-width: 600px) {
+  .user-menu-panel {
+    position: fixed;
+    top: 80px;
+    right: 12px;
+    left: auto;
+    width: 320px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 100px);
+    overflow-y: auto;
+  }
+
+  .user-menu-name {
+    max-width: 48px;
+    font-size: 10px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .user-menu-panel {
+    right: 8px;
+    max-width: calc(100vw - 16px);
+    padding: 12px;
+  }
+}
