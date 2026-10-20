@@ -43,7 +43,7 @@ export const userRegister = async (req,res)=>{
         Data    :  registeredUser
     });
     } 
-    catch (error) {
+    catch (error) {console.log(error)
        return res.status(500).json({
             message : "User not Register",
             error : error.message

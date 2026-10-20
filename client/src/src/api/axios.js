@@ -5,12 +5,12 @@ const API_URL =
     ? 'http://localhost:5000'
     : 'https://website-fpuc.onrender.com';
 
-export const api = axios.create({
-  baseURL: `${API_URL}/admin/Auth`,
+export const userApi = axios.create({
+  baseURL: `${API_URL}/user/Auth`,
   withCredentials: true,
 });
 
-export const userApi = axios.create({
-  baseURL: `${API_URL}/user/Auth`,
+export const api = axios.create({
+  baseURL: `${API_URL}/admin/Auth`,
   withCredentials: true,
 });
