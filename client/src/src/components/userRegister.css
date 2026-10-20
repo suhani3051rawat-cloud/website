@@ -350,4 +350,6 @@ body:has(.auth-overlay) .search-icon {
 body:has(.auth-overlay) .search-bar {
   display: none !important;
 }
-
+body:has(.auth-overlay) .fe-footer {
+  display: none !important;
+}
