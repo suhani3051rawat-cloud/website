@@ -74,8 +74,10 @@ export const userLogin = async (req,res)=>{
             );
             res.cookie("token", Token ,{
                 httpOnly : true, 
-                secure   : false,
+                secure   : true,
                 maxAge   : 1000*60*60*24,
+                sameSite: "none",
+                path: "/"
             });
         res.json({
             message : "you are loggin",
