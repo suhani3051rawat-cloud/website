@@ -105,36 +105,51 @@ export const userLogOut = async (req,res)=>{
        }); 
     }
 }
-export const getCurrentUser = async (req,res) =>{
-    try {
-       let findUser = await userRegisterModel.findById(req.data.id).select('-password -__v');
-        if(!findUser){
-            return res.json({
-                message :"User not found in dataBase"
-            });
-        }  
-        let fetchAddress = await userRegisterModel.aggregate([
-            {
-                $lookup :{
-                   from : "addressmodels",
-                   localField : "_id",
-                   foreignField : "user_id",
-                   as : "Address"
-                  }
-                }
-            ])          
 
-        res.json({
-            message : "User logged in",
-            user    : fetchAddress
-        }); 
-    } 
-    catch (error) {
-       return res.json({
-          message : error.message
-       }); 
-    }  
-}
+export const getCurrentUser = async (req, res) => {
+  try {
+    // JWT middleware se current logged-in user ki ID
+    const userId = req.data?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Please login first",
+      });
+    }
+
+    // Sirf logged-in user ko find karo
+    const findUser = await userRegisterModel
+      .findById(userId)
+      .select("-password -__v")
+      .lean();
+
+    if (!findUser) {
+      return res.status(404).json({
+        message: "User not found in database",
+      });
+    }
+
+    // Sirf isi user ke addresses fetch karo
+    const fetchAddress = await addressModel.find({
+      user_id: userId,
+      "address.isDelete": { $ne: true },
+    }).lean();
+
+    return res.status(200).json({
+      message: "User logged in",
+      user: {
+        ...findUser,
+        Address: fetchAddress,
+      },
+    });
+  } catch (error) {
+    console.error("getCurrentUser error:", error);
+
+    return res.status(500).json({
+      message: "Unable to fetch current user",
+    });
+  }
+};
 export const storeMultipleAddress = async (req, res) =>{
     try {
         let {address} = req.body;
