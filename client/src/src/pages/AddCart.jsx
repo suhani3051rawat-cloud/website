@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import axios from "axios";
+import { userApi } from "../api/axios.js";
 
 import {
     useDispatch,
@@ -19,7 +18,6 @@ import {
 import "../components/addCart.css";
 
 function AddCart({ closeCart }) {
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -35,24 +33,22 @@ function AddCart({ closeCart }) {
 
         const fetchCurrentUser = async () => {
             try {
-                const resp = await axios.get(
-                    `http://localhost:5000/user/Auth/getCurrent/user`,
-                    {
-                        withCredentials: true
-                    }
-                );
+                const resp = await userApi.get("/getCurrent/user");
 
                 if (isActive) {
+                    const data =
+                        resp.data?.User ||
+                        resp.data?.user ||
+                        resp.data?.data ||
+                        null;
+
                     setCurrentUser(
-                        resp.data.User ||
-                        resp.data.user ||
-                        resp.data.data ||
-                        null
+                        Array.isArray(data) ? data[0] || null : data
                     );
                 }
             } catch (error) {
                 console.log(
-                    'getCurrent error:',
+                    "getCurrent error:",
                     error.response?.status,
                     error.response?.data || error.message
                 );
@@ -82,8 +78,7 @@ function AddCart({ closeCart }) {
     );
 
     const totalPrice = cartItems.reduce(
-        (total, item) =>
-            total + item.price * item.quantity,
+        (total, item) => total + item.price * item.quantity,
         0
     );
 
@@ -102,7 +97,6 @@ function AddCart({ closeCart }) {
                 className="auth-popup-backdrop"
                 onClick={closeCart}
             >
-
                 <div
                     className="auth-popup"
                     role="dialog"
@@ -110,7 +104,6 @@ function AddCart({ closeCart }) {
                     aria-labelledby="auth-popup-title"
                     onClick={(e) => e.stopPropagation()}
                 >
-
                     <button
                         className="auth-popup-close"
                         onClick={closeCart}
@@ -133,7 +126,6 @@ function AddCart({ closeCart }) {
                     </p>
 
                     <div className="auth-popup-actions">
-
                         <button
                             className="auth-popup-primary"
                             onClick={() => goTo("/login")}
@@ -147,18 +139,14 @@ function AddCart({ closeCart }) {
                         >
                             Create Account
                         </button>
-
                     </div>
-
                 </div>
-
             </div>
         );
     }
 
     return (
         <>
-
             <div
                 className="cart-backdrop"
                 onClick={closeCart}
@@ -168,19 +156,14 @@ function AddCart({ closeCart }) {
                 className="cart-drawer"
                 onClick={(e) => e.stopPropagation()}
             >
-
                 <div className="cart-header">
-
                     <h1>My Cart</h1>
 
                     <div className="cart-header-right">
-
                         {cartItems.length > 0 && (
                             <button
                                 className="clear-cart"
-                                onClick={() =>
-                                    dispatch(clearCart())
-                                }
+                                onClick={() => dispatch(clearCart())}
                             >
                                 Clear
                             </button>
@@ -189,191 +172,120 @@ function AddCart({ closeCart }) {
                         <button
                             className="close-cart"
                             onClick={closeCart}
-                        >
-                        </button>
-
+                        ></button>
                     </div>
-
                 </div>
 
                 {cartItems.length === 0 ? (
-
                     <div className="empty-cart">
-
                         <div className="empty-cart-icon">
                             🛒
                         </div>
 
-                        <h2>
-                            Your cart is empty
-                        </h2>
+                        <h2>Your cart is empty</h2>
 
                         <p>
                             Add some products to your cart
                             and they will appear here.
                         </p>
-
                     </div>
-
                 ) : (
-
                     <>
-
                         <div className="cart-products">
-
                             {cartItems.map((item) => (
-
                                 <div
                                     className="cart-item"
                                     key={item._id}
                                 >
-
                                     <div className="cart-image">
-
                                         <img
                                             src={item.image}
                                             alt={item.name}
                                         />
-
                                     </div>
 
                                     <div className="cart-details">
-
-                                        <h3>
-                                            {item.name}
-                                        </h3>
+                                        <h3>{item.name}</h3>
 
                                         <p className="cart-price">
                                             ₹{item.price}
                                         </p>
 
                                         <div className="quantity-box">
-
                                             <button
                                                 onClick={() =>
                                                     dispatch(
-                                                        decreaseQuantity(
-                                                            item._id
-                                                        )
+                                                        decreaseQuantity(item._id)
                                                     )
                                                 }
                                             >
                                                 −
                                             </button>
 
-                                            <span>
-                                                {item.quantity}
-                                            </span>
+                                            <span>{item.quantity}</span>
 
                                             <button
                                                 onClick={() =>
                                                     dispatch(
-                                                        increaseQuantity(
-                                                            item._id
-                                                        )
+                                                        increaseQuantity(item._id)
                                                     )
                                                 }
                                             >
                                                 +
                                             </button>
-
                                         </div>
-
                                     </div>
 
                                     <div className="item-total">
-
                                         <strong>
-                                            ₹
-                                            {item.price *
-                                                item.quantity}
+                                            ₹{item.price * item.quantity}
                                         </strong>
 
                                         <button
                                             className="remove-btn"
                                             onClick={() =>
                                                 dispatch(
-                                                    removeFromCart(
-                                                        item._id
-                                                    )
+                                                    removeFromCart(item._id)
                                                 )
                                             }
                                         >
                                             Remove
                                         </button>
-
                                     </div>
-
                                 </div>
-
                             ))}
-
                         </div>
 
                         <div className="cart-summary">
-
                             <div className="summary-row">
-
-                                <span>
-                                    Items
-                                </span>
-
-                                <span>
-                                    {totalItems}
-                                </span>
-
+                                <span>Items</span>
+                                <span>{totalItems}</span>
                             </div>
 
                             <div className="summary-row">
-
-                                <span>
-                                    Subtotal
-                                </span>
-
-                                <span>
-                                    ₹{totalPrice}
-                                </span>
-
+                                <span>Subtotal</span>
+                                <span>₹{totalPrice}</span>
                             </div>
 
                             <div className="summary-row">
-
-                                <span>
-                                    Delivery
-                                </span>
-
-                                <span>
-                                    Free
-                                </span>
-
+                                <span>Delivery</span>
+                                <span>Free</span>
                             </div>
 
                             <hr />
 
                             <div className="summary-total">
-
-                                <span>
-                                    Total
-                                </span>
-
-                                <strong>
-                                    ₹{totalPrice}
-                                </strong>
-
+                                <span>Total</span>
+                                <strong>₹{totalPrice}</strong>
                             </div>
 
                             <button className="checkout-btn">
                                 Proceed to Checkout
                             </button>
-
                         </div>
-
                     </>
-
                 )}
-
             </div>
-
         </>
     );
 }

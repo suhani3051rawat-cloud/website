@@ -1,8 +1,13 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { userApi } from '../api/axios.js';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState
+} from "react";
 
-const API = "http://localhost:5000/user/Auth";
+import { userApi } from "../api/axios.js";
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -11,11 +16,23 @@ export function AuthProvider({ children }) {
 
     const fetchUser = useCallback(async () => {
         try {
-        const resp = await userApi.get('/getCurrent/user');
-            const data = resp.data?.user;
+            const resp = await userApi.get("/getCurrent/user");
+
+            const data =
+                resp.data?.user ||
+                resp.data?.User ||
+                resp.data?.data ||
+                null;
+
             const current = Array.isArray(data) ? data[0] : data;
+
             setUser(current || null);
         } catch (err) {
+            console.log(
+                "Fetch user error:",
+                err.response?.data || err.message
+            );
+
             setUser(null);
         } finally {
             setLoading(false);
@@ -28,15 +45,21 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await axios.post(`${API}/logout/user`, {}, { withCredentials: true });
+            await userApi.post("/logout/user", {});
         } catch (err) {
-            console.log(err.message);
+            console.log(
+                "Logout error:",
+                err.response?.data || err.message
+            );
         }
+
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, fetchUser, logout }}>
+        <AuthContext.Provider
+            value={{ user, loading, fetchUser, logout }}
+        >
             {children}
         </AuthContext.Provider>
     );

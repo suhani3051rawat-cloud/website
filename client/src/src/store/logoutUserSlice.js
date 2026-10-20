@@ -1,50 +1,49 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { userApi } from "../api/axios.js";
 
-let initialState = {
-    loading : false,
-    message : "",
-    error   : ""
-}
+const initialState = {
+    loading: false,
+    message: "",
+    error: ""
+};
 
 export const userLogout = createAsyncThunk(
-    'user/logout',
-     async ( _ , THUNKAPi) =>{
+    "user/logout",
+    async (_, thunkAPI) => {
         try {
-          let resp = await axios.post(`http://localhost:5000/api/auth/logout/user`,{}, 
-            {
-                withCredentials : true
-            }
-          )  
-         return resp.data;
+            const resp = await userApi.post("/logout/user", {});
+            return resp.data;
         } catch (error) {
-            return THUNKAPi.rejectWithValue(
+            return thunkAPI.rejectWithValue(
                 error.response?.data || error.message
-            )
+            );
         }
-     }
-)
+    }
+);
 
-let userLogoutSlice = createSlice({
-    name : 'userLogout',
+const userLogoutSlice = createSlice({
+    name: "userLogout",
     initialState,
-    reducers : {},
-    extraReducers : (builder)=>{
-        builder 
-
-    .addCase(userLogout.pending, (state)=>{
-                state.loading = true
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(userLogout.pending, (state) => {
+                state.loading = true;
+                state.error = "";
             })
-            .addCase(userLogout.fulfilled,(state,action)=>{
-                 state.loading = false 
-                 state.message = action.payload.message
-                 state.error   = ""
-            }) 
-            .addCase(userLogout.rejected, (state, action)=>{
-                 state.loading = false,
-                 state.error = action.payload
+            .addCase(userLogout.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload?.message || "Logout successful";
+                state.error = "";
+            })
+            .addCase(userLogout.rejected, (state, action) => {
+                state.loading = false;
+                state.error =
+                    action.payload?.message ||
+                    action.payload ||
+                    action.error.message;
             });
     }
-})
+});
 
-export default userLogoutSlice.reducer; 
+export default userLogoutSlice.reducer;

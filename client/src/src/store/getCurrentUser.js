@@ -1,51 +1,56 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { userApi } from "../api/axios.js";
 
-let initialState = {
-    loading : false,
-    message : "",
-    error   : ""
-}
+const initialState = {
+    loading: false,
+    user: null,
+    message: "",
+    error: ""
+};
 
 export const getCurrentUser = createAsyncThunk(
-    'getuser',
-     async ( _ , THUNKAPi) =>{
+    "getuser",
+    async (_, thunkAPI) => {
         try {
-          let resp = await axios.get( `http://localhost:5000/user/Auth/getCurrent/user`, 
-            {
-                withCredentials : true
-            }
-          )  
-         return resp.data;
+            const resp = await userApi.get("/getCurrent/user");
+            return resp.data;
         } catch (error) {
-            return THUNKAPi.rejectWithValue(
+            return thunkAPI.rejectWithValue(
                 error.response?.data || error.message
-            )
+            );
         }
-     }
-)
+    }
+);
 
-let getCurrentUserSlice = createSlice({
-    name : 'getCurrentUser',
+const getCurrentUserSlice = createSlice({
+    name: "getCurrentUser",
     initialState,
-    reducers : {},
-    extraReducers : (builder)=>{
-        builder 
-
-            .addCase(getCurrentUser.pending, (state)=>{
-                state.loading = true
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(getCurrentUser.pending, (state) => {
+                state.loading = true;
+                state.error = "";
             })
-            .addCase(getCurrentUser.fulfilled,(state,action)=>{
-                 state.loading = false 
-                 state.message = action.payload.message
-                 state.error   = ""
-                 state.user    = action.payload.User
-            }) 
-            .addCase(getCurrentUser.rejected, (state, action)=>{
-                 state.loading = false,
-                 state.error = action.payload
+            .addCase(getCurrentUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload?.message || "";
+                state.error = "";
+
+                state.user =
+                    action.payload?.User ||
+                    action.payload?.user ||
+                    action.payload?.data ||
+                    null;
+            })
+            .addCase(getCurrentUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error =
+                    action.payload?.message ||
+                    action.payload ||
+                    action.error.message;
             });
     }
-})
+});
 
 export default getCurrentUserSlice.reducer;

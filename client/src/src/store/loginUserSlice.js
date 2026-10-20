@@ -1,53 +1,56 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { userApi } from "../api/axios.js";
 
-let initialState = {
-    loading : false,
-    user    : null,
-    message : "",
-    error   : ""
-}
+const initialState = {
+    loading: false,
+    user: null,
+    message: "",
+    error: ""
+};
 
 export const userLogin = createAsyncThunk(
-    'user/login',
-     async (userLogin, THUNKAPi) =>{
+    "user/login",
+    async (loginData, thunkAPI) => {
         try {
-          let resp = await axios.post( `http://localhost:5000/user/Auth/login/user`, 
-            userLogin,
-            {
-                withCredentials : true
-            }
-          )  
-         return resp.data;
+            const resp = await userApi.post("/login/user", loginData);
+            return resp.data;
         } catch (error) {
-            return THUNKAPi.rejectWithValue(
+            return thunkAPI.rejectWithValue(
                 error.response?.data || error.message
-            )
+            );
         }
-     }
-)
+    }
+);
 
-let userLoginSlice = createSlice({
-    name : 'userLogin',
+const userLoginSlice = createSlice({
+    name: "userLogin",
     initialState,
-    reducers : {},
-    extraReducers : (builder)=>{
-        builder 
-
-    .addCase(userLogin.pending, (state)=>{
-                state.loading = true
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(userLogin.pending, (state) => {
+                state.loading = true;
+                state.error = "";
             })
-            .addCase(userLogin.fulfilled,(state,action)=>{
-                 state.loading = false 
-                 state.message = action.payload.message
-                 state.error   = ""
-                 state.user    = action.payload.User
-            }) 
-            .addCase(userLogin.rejected, (state, action)=>{
-                 state.loading = false,
-                 state.error = action.payload
+            .addCase(userLogin.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload?.message || "";
+                state.error = "";
+
+                state.user =
+                    action.payload?.User ||
+                    action.payload?.user ||
+                    action.payload?.data ||
+                    null;
+            })
+            .addCase(userLogin.rejected, (state, action) => {
+                state.loading = false;
+                state.error =
+                    action.payload?.message ||
+                    action.payload ||
+                    action.error.message;
             });
     }
-})
+});
 
 export default userLoginSlice.reducer;
