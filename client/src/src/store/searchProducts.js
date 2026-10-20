@@ -1,57 +1,82 @@
-import {
-    createSlice,
-    createAsyncThunk
-} from "@reduxjs/toolkit";
 
-import { userApi } from "../api/axios.js";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../api/axios.js";
 
-const initialState = {
-    products: [],
-    search: "",
-    loading: false,
-    error: null
-};
-
+// Search API
 export const searchProducts = createAsyncThunk(
-    "search/items",
-    async (search, { rejectWithValue }) => {
-        try {
-            const response = await userApi.get("/search/product", {
-                params: { search }
-            });
+  "searchProducts/search",
+  async (search, { rejectWithValue }) => {
+    try {
+      const query = search?.trim();
 
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(
-                error.response?.data?.message ||
-                error.message ||
-                "Unable to load products"
-            );
-        }
+      if (!query) {
+        return { product: [] };
+      }
+
+      const response = await api.get("/search/product", {
+        params: { search: query },
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Unable to search products. Please try again."
+      );
     }
+  }
 );
 
+const initialState = {
+  search: "",
+  products: [],
+  loading: false,
+  error: null,
+};
+
 const searchProductsSlice = createSlice({
-    name: "products",
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(searchProducts.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(searchProducts.fulfilled, (state, action) => {
-                state.products = action.payload?.product || [];
-                state.search = action.meta.arg;
-                state.loading = false;
-                state.error = null;
-            })
-            .addCase(searchProducts.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "Unable to search products";
-            });
-    }
+  name: "searchProducts",
+  initialState,
+
+  reducers: {
+    setSearch: (state, action) => {
+      state.search = action.payload;
+    },
+
+    clearSearch: (state) => {
+      state.search = "";
+      state.products = [];
+      state.loading = false;
+      state.error = null;
+    },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(searchProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(searchProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+
+        state.products = Array.isArray(action.payload?.product)
+          ? action.payload.product
+          : [];
+      })
+
+      .addCase(searchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.products = [];
+        state.error =
+          action.payload || "Unable to search products.";
+      });
+  },
 });
+
+// Required exports
+export const { setSearch, clearSearch } = searchProductsSlice.actions;
 
 export default searchProductsSlice.reducer;
