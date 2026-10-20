@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import website_Logo from '../assets/logo.svg';
 import search_icon from '../assets/search.svg';
-import user from '../assets/user.svg';
+import userIcon from '../assets/user.svg';
 import cart from '../assets/cart.svg';
 import { searchProducts } from '../store/searchProducts.js';
 import Location from '../pages/Location.jsx';
 import AddToCart from '../pages/AddCart.jsx';
+import UserMenu from "../pages/UserMenu.jsx";
+import { useAuth } from '../pages/AuthContext.jsx';
 
 function Navbar() {
   const [search, setSearch] = useState('');
@@ -16,6 +18,7 @@ function Navbar() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
   const cartItems = useSelector((state) => state.cart.items || []);
 
@@ -51,7 +54,7 @@ function Navbar() {
             </div>
 
             <div className="brand-name">
-                farm<span>Era</span>
+              farm<span>Era</span>
               <p>fresh from Nature</p>
             </div>
           </div>
@@ -75,14 +78,20 @@ function Navbar() {
             />
           </div>
 
-          <button
-            type="button"
-            className="user"
-            onClick={() => navigate('/register')}
-            aria-label="Open account"
-          >
-            <img src={user} alt="User account" />
-          </button>
+          {!loading && (
+            user ? (
+              <UserMenu iconSrc={userIcon} />
+            ) : (
+              <button
+                type="button"
+                className="user"
+                onClick={() => navigate('/register')}
+                aria-label="Open account"
+              >
+                <img src={userIcon} alt="User account" />
+              </button>
+            )
+          )}
 
           <div>
             <button

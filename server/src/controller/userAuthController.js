@@ -96,9 +96,7 @@ export const userLogOut = async (req,res)=>{
        res.json({
         message : " user logout"
        }); 
-       console.log("token after logout",req.cookies.token);
     } catch (error) {
-        console.log(error)
        return res.json({
         message : "user is not logged in",
         error   : error
@@ -113,9 +111,20 @@ export const getCurrentUser = async (req,res) =>{
                 message :"User not found in dataBase"
             });
         }  
+        let fetchAddress = await userRegisterModel.aggregate([
+            {
+                $lookup :{
+                   from : "addressmodels",
+                   localField : "_id",
+                   foreignField : "user_id",
+                   as : "Address"
+                  }
+                }
+            ])          
+
         res.json({
             message : "User logged in",
-            user    : findUser
+            user    : fetchAddress
         }); 
     } 
     catch (error) {
@@ -157,7 +166,28 @@ export const storeMultipleAddress = async (req, res) =>{
             error   : error
         }); 
     }
-}  
+} 
+export const DeleteAddress = async (req, res) => {
+    try {
+        const { user_id, address_id } = req.params;
+
+        const updated = await addressModel.findOneAndUpdate(
+            { user_id, "address._id": address_id },
+            { $set: { "address.$.isDelete": true } }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ message: "address not found" });
+        }
+
+        return res.status(200).json({ message: "address deleted" });
+    } catch (error) {
+        return res.status(500).json({
+            message: "address not deleted",
+            error: error.message
+        });
+    }
+};
 export const DeleteUserAccount = async (req, res)=>{
     try {
         let{user_id} = req.params;

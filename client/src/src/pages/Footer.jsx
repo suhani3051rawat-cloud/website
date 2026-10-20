@@ -90,10 +90,6 @@ const Footer = () => {
                 Explore our store
                 <span>→</span>
               </Link>
-
-              <Link to="/register" className="fe-ghost-button">
-                Create account
-              </Link>
             </div>
 
             <div className="fe-pills">

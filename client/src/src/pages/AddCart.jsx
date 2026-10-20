@@ -42,8 +42,6 @@ function AddCart({ closeCart }) {
                     }
                 );
 
-                console.log('getCurrent response:', resp.status, resp.data);
-
                 if (isActive) {
                     setCurrentUser(
                         resp.data.User ||

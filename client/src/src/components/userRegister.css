@@ -341,3 +341,13 @@
     animation: none;
   }
 }
+
+body:has(.auth-overlay) .search-icon {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body:has(.auth-overlay) .search-bar {
+  display: none !important;
+}
+

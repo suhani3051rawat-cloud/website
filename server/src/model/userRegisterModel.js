@@ -20,7 +20,7 @@ let userSchema = mongoose.Schema({
     phone_number:{
         type      : String,
         required  : true,
-        trim      : true
+        trim      : true,
     },
     status:{
         type      : Number,

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import { addToCart } from "../store/cartSlice.js";
 import React from 'react'
+import "../components/products.css";
 
 function MilkProducts() {
   const {
@@ -75,7 +76,7 @@ function MilkProducts() {
           <h4>{product.name}</h4><br />
           <p>{product.description}</p>
           <div className="price">
-            <p style={{ paddingTop: "8px" }}>₹{product.price}</p>
+            <p>₹{product.price}</p>
             <button onClick={() => dispatch(addToCart(product))}>Add</button>
           </div>
         </div>

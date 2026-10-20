@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
 import '../components/userRegister.css';
 import { validateForm } from '../utils/validation.js';
+import { useAuth } from './AuthContext.jsx';
 
 function UserLogin({ onClose }) {
   const navigate = useNavigate();
+  const { fetchUser } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -82,6 +84,9 @@ function UserLogin({ onClose }) {
       });
 
       setValidationErrors({});
+
+      await fetchUser();
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Login failed:', err);
 

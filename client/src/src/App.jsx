@@ -1,19 +1,24 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import AppRoutes from './routes/AppRoutes';
-import Footer from './pages/Footer';
+
+import React from "react";
+import { AuthProvider } from "./pages/AuthContext.jsx";
+import { AddressProvider } from "./pages/AddressContext.jsx";
+
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/HeroSection.jsx";
+import AppRoutes from "./routes/AppRoutes.jsx";
+import Footer from "./pages/Footer.jsx";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Navbar />
-      <HeroSection />
-      <AppRoutes />
-      <Footer />
-    </BrowserRouter>
-  );
+    return (
+        <AuthProvider>
+            <AddressProvider>
+                <Navbar />
+                <Hero />
+                <AppRoutes />
+                <Footer />
+            </AddressProvider>
+        </AuthProvider>
+    );
 }
 
 export default App;

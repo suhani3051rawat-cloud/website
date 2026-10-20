@@ -8,6 +8,7 @@ import VermicelliProducts from '../pages/VermicelliProducts';
 import PeanutButter from '../pages/PeanutButter';
 import UserRegister from '../pages/UserRegister';
 import UserLogin from '../pages/UserLogin';
+import PublicOnlyRoute from '../pages/PublicOnlyRoute';
 import milk from '../assets/milk.jpg';
 import paneer from '../assets/paneer3.jfif';
 import curd from '../assets/curd.jfif';
@@ -48,8 +49,22 @@ function AppRoutes() {
           <Route path="/poha" element={<></>} />
           <Route path="/oats" element={<></>} />
           <Route path="/egg" element={<></>} />
-          <Route path="/register" element={<UserRegister />} />
-          <Route path="/login" element={<UserLogin />} />
+          <Route
+            path="/register"
+            element={
+              <PublicOnlyRoute>
+                <UserRegister />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicOnlyRoute>
+                <UserLogin />
+              </PublicOnlyRoute>
+            }
+          />
         </Routes>
       </main>
     </div>

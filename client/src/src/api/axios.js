@@ -10,5 +10,3 @@ export const api = axios.create({
   baseURL: `${API_URL}/admin/Auth`,
   withCredentials: true,
 });
-console.log("HOST:", window.location.hostname);
-console.log("API:", API_URL);
