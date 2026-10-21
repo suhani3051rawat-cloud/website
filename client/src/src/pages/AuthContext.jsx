@@ -46,16 +46,23 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, [fetchUser]);
 
-  const logout = useCallback(async () => {
-    setUser(null);
+ const logout = useCallback(async () => {
+  try {
+    await userApi.post(
+      "/logout/user",
+      {},
+      { withCredentials: true }
+    );
 
-    try {
-      await userApi.post("/logout/user", {},  { withCredentials: true });
-      return true;
-    } catch (error) {
-      console.error("Logout failed:", error.response?.data || error.message);
-      throw error;
-    }
+    setUser(null);
+    return true;
+  } catch (error) {
+    console.error(
+      "Logout failed:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
   }, []);
 
   return (
