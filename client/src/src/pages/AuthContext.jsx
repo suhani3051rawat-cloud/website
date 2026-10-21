@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
     setUser(null);
 
     try {
-      await userApi.post("/logout/user", {});
+      await userApi.post("/logout/user", {},  { withCredentials: true });
       return true;
     } catch (error) {
       console.error("Logout failed:", error.response?.data || error.message);
