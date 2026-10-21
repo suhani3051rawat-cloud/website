@@ -100,10 +100,14 @@ export const userLogout = async (req, res) => {
     });
 
     return res.status(200).json({
+      success: true,
       message: "Logout successful",
     });
   } catch (error) {
+    console.error("Logout error:", error);
+
     return res.status(500).json({
+      success: false,
       message: "Logout failed",
     });
   }
@@ -112,16 +116,12 @@ export const userLogout = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
   try {
-    // JWT middleware se current logged-in user ki ID
     const userId = req.data?.id;
-
     if (!userId) {
       return res.status(401).json({
         message: "Please login first",
       });
     }
-
-    // Sirf logged-in user ko find karo
     const findUser = await userRegisterModel
       .findById(userId)
       .select("-password -__v")
@@ -132,8 +132,6 @@ export const getCurrentUser = async (req, res) => {
         message: "User not found in database",
       });
     }
-
-    // Sirf isi user ke addresses fetch karo
     const fetchAddress = await addressModel.find({
       user_id: userId,
       "address.isDelete": { $ne: true },
