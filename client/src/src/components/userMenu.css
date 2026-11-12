@@ -478,3 +478,245 @@
         padding: 5px;
     }
 }
+
+/* USER MENU TRIGGER */
+
+.user-menu-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 10px 13px;
+    font-size: 15px;
+    font-weight: 750;
+    color: #203f27;
+    white-space: nowrap;
+}
+
+.user-menu-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #203f27;
+}
+
+.user-menu-chevron {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* DROPDOWN PANEL */
+
+.user-menu-panel {
+    width: 360px;
+    max-width: calc(100vw - 24px);
+    box-sizing: border-box;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* USER DETAILS */
+
+.user-menu-welcome {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    color: #58704f;
+}
+
+.user-menu-user-details h4 {
+    margin: 5px 0;
+    font-size: 19px;
+    font-weight: 850;
+    color: #203f27;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.user-menu-user-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    font-weight: 550;
+    line-height: 1.5;
+    color: #4d5b49;
+    overflow-wrap: anywhere;
+}
+
+/* SECTION HEADINGS */
+
+.user-menu-section-heading h5,
+.user-menu-form-heading h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 850;
+    color: #203f27;
+}
+
+.user-menu-section-heading p,
+.user-menu-form-heading p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    font-weight: 550;
+    color: #667361;
+    line-height: 1.5;
+}
+
+.user-menu-address-count {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* SAVED ADDRESSES */
+
+.user-menu-address {
+    padding: 13px;
+}
+
+.user-menu-type {
+    font-size: 14px;
+    font-weight: 800;
+    color: #203f27;
+}
+
+.user-menu-selected-tag {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.user-menu-address > p {
+    margin: 7px 0;
+    font-size: 14px;
+    font-weight: 550;
+    line-height: 1.6;
+    color: #384638;
+    overflow-wrap: anywhere;
+}
+
+.user-menu-address-footer {
+    margin-top: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #59714e;
+}
+
+.user-menu-empty p {
+    font-size: 15px;
+    font-weight: 750;
+    color: #203f27;
+}
+
+.user-menu-empty small {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* FORM */
+
+.user-menu-form input,
+.user-menu-form select {
+    width: 100%;
+    min-height: 45px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 550;
+    color: #203f27;
+}
+
+.user-menu-form input::placeholder {
+    font-size: 13px;
+    font-weight: 500;
+    color: #899184;
+}
+
+.user-menu-input-label {
+    display: block;
+    margin: 12px 0 6px;
+    font-size: 14px;
+    font-weight: 750;
+    color: #203f27;
+}
+
+.user-menu-form-actions button,
+.user-menu-add,
+.user-menu-logout {
+    font-size: 14px;
+    font-weight: 800;
+    min-height: 43px;
+}
+
+.user-menu-error {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+/* TABLET AND MOBILE */
+
+@media (max-width: 768px) {
+    .user-menu-panel {
+        width: min(360px, calc(100vw - 24px));
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+
+    .user-menu-trigger {
+        gap: 6px;
+        padding: 9px 8px;
+    }
+
+    .user-menu-name {
+        font-size: 14px;
+    }
+
+    .user-menu-user-details h4 {
+        font-size: 18px;
+    }
+
+    .user-menu-user-details p {
+        font-size: 14px;
+    }
+
+    .user-menu-section-heading h5,
+    .user-menu-form-heading h5 {
+        font-size: 16px;
+    }
+
+    .user-menu-address > p {
+        font-size: 14px;
+    }
+
+    .user-menu-form input,
+    .user-menu-form select {
+        min-height: 46px;
+        font-size: 14px;
+    }
+
+    .user-menu-add,
+    .user-menu-logout,
+    .user-menu-form-actions button {
+        min-height: 45px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 380px) {
+    .user-menu-panel {
+        width: calc(100vw - 20px);
+    }
+
+    .user-menu-name {
+        font-size: 13px;
+    }
+
+    .user-menu-address {
+        padding: 11px;
+    }
+
+    .user-menu-address > p {
+        font-size: 13px;
+    }
+
+    .user-menu-user-details h4 {
+        font-size: 16px;
+    }
+}
+
