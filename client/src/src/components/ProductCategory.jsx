@@ -102,11 +102,13 @@ function ProductCategory({ category }) {
 
                         {cartItem ? (
                             <div className="quantity-box">
-                            <button onClick={() => dispatch(decreaseQuantity(product._id))}>
+                            <button onClick={() => dispatch(decreaseQuantity(product._id))}   
+                             className="quantity-btn">
                               −
                             </button>
                             <span>{cartItem.quantity}</span>
-                          <button onClick={() => dispatch(increaseQuantity(product._id))}>
+                          <button onClick={() => dispatch(increaseQuantity(product._id))}  
+                            className="quantity-btn">
                               +
                             </button>
                               </div>
