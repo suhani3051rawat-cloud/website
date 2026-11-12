@@ -101,7 +101,7 @@ function ProductCategory({ category }) {
                             <p>₹{product.price}</p>
 
                         {cartItem ? (
-                            <div className="quantity-box" style={{ border : "1px solid transparent"}}>
+                            <div className="quantity-box">
                             <button onClick={() => dispatch(decreaseQuantity(product._id))}>
                               −
                             </button>

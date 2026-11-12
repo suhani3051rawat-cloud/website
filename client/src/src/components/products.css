@@ -131,6 +131,67 @@
   60% { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
+.quantity-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+    border: none;
+    padding: 0;
+}
+
+.quantity-box button {
+    width: 23px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #203f27;
+    background: transparent;
+    color: #203f27;
+    font-size: 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quantity-box span {
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 12px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .quantity-box {
+        gap: 3px;
+    }
+
+    .quantity-box button {
+        width: 20px;
+        height: 20px;
+        font-size: 13px;
+    }
+
+    .quantity-box span {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quantity-box {
+        gap: 1px;
+    }
+
+    .quantity-box button {
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+    }
+
+    .quantity-box span {
+        font-size: 10px;
+    }
+}
 
 /* Mobile: 3 products per row, price left and Add button right */
 @media (max-width: 600px) {
