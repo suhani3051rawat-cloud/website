@@ -119,7 +119,6 @@ function ProductCategory({ category }) {
                                 <div className="product-card-bottom">
                                     <div className="product-price">
                                         <span>₹{product.price}</span>
-                                        <small>Inclusive of all taxes</small>
                                     </div>
 
                                     {cartItem ? (
@@ -157,6 +156,7 @@ function ProductCategory({ category }) {
                                         </button>
                                     )}
                                 </div>
+                                 <small>Inclusive of all taxes</small>
                             </div>
                         </div>
                     );

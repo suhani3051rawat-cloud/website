@@ -1037,3 +1037,66 @@
   }
 }
 
+/* SEARCH RESULTS RESPONSIVE ALIGNMENT */
+
+.search-wrapper {
+    position: relative !important;
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
+}
+
+.search-results-dropdown {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+    z-index: 9999;
+}
+
+.search-product-row {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.search-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-product-info h4 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-product-right {
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .navBar-content .search-wrapper {
+        grid-area: search;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .navBar-content .search-results-dropdown {
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        transform: none !important;
+    }
+}
+
+
