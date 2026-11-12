@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
@@ -49,6 +50,9 @@ function UserRegister({ onClose }) {
       ...previous,
       [name]: '',
     }));
+
+    setError('');
+    setMessage('');
   };
 
   const handleRegister = async (event) => {
@@ -94,7 +98,7 @@ function UserRegister({ onClose }) {
   return (
     <div className="auth-overlay">
       <div
-        className="auth-modal"
+        className="auth-modal auth-register-modal"
         role="dialog"
         aria-modal="true"
         aria-label="Register"
@@ -111,13 +115,18 @@ function UserRegister({ onClose }) {
         </button>
 
         <div className="auth-content">
-          <img className="auth-logo" src={website_Logo} alt="farmEra logo" />
+          <div className="auth-brand">
+            <img className="auth-logo" src={website_Logo} alt="farmEra logo" />
+            <span>farm<span>Era</span></span>
+          </div>
 
-          <h2>farmEra</h2>
-
-          <p className="auth-title">
-            Create your account and get fresh groceries at your doorstep
-          </p>
+          <div className="auth-heading">
+            <span className="auth-eyebrow">JOIN THE FARMERA FAMILY</span>
+            <h2>Create your account</h2>
+            <p>
+              Fresh groceries and everyday goodness, just a few steps away.
+            </p>
+          </div>
 
           <form onSubmit={handleRegister} noValidate>
             <div className="auth-field">
@@ -137,7 +146,7 @@ function UserRegister({ onClose }) {
             </div>
 
             <div className="auth-field">
-              <label htmlFor="auth-register-email">Email</label>
+              <label htmlFor="auth-register-email">Email address</label>
               <input
                 id="auth-register-email"
                 type="email"
@@ -158,7 +167,7 @@ function UserRegister({ onClose }) {
                 id="auth-register-password"
                 type="password"
                 name="password"
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="new-password"
@@ -174,7 +183,7 @@ function UserRegister({ onClose }) {
                 id="auth-phone"
                 type="tel"
                 name="phone_number"
-                placeholder="Enter your phone number"
+                placeholder="Enter your 10-digit phone number"
                 value={formData.phone_number}
                 onChange={handleChange}
                 maxLength={10}
@@ -182,18 +191,17 @@ function UserRegister({ onClose }) {
                 autoComplete="tel"
               />
               {validationErrors.phone_number && (
-                <p className="auth-error">
-                  {validationErrors.phone_number}
-                </p>
+                <p className="auth-error">{validationErrors.phone_number}</p>
               )}
             </div>
 
             <button className="auth-submit" type="submit" disabled={loading}>
-              {loading ? 'Registering...' : 'Create Account'}
+              {loading ? 'Creating account...' : 'Create Account'}
+              {!loading && <span>→</span>}
             </button>
 
             {message && <p className="auth-success">{message}</p>}
-            {error && <p className="auth-error">{error}</p>}
+            {error && <p className="auth-error auth-message">{error}</p>}
 
             <p className="auth-switch">
               Already have an account?

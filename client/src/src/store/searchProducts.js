@@ -76,7 +76,6 @@ const searchProductsSlice = createSlice({
   },
 });
 
-// Required exports
 export const { setSearch, clearSearch } = searchProductsSlice.actions;
 
 export default searchProductsSlice.reducer;

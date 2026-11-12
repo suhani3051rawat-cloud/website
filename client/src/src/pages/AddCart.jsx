@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { userApi } from "../api/axios.js";
 
@@ -112,9 +113,11 @@ function AddCart({ closeCart }) {
                         ×
                     </button>
 
-                    <div className="auth-popup-icon">
-                        🛒
-                    </div>
+                    <div className="auth-popup-icon">🛒</div>
+
+                    <span className="auth-popup-tag">
+                        FarmEra Shopping
+                    </span>
 
                     <h2 id="auth-popup-title">
                         Login to open your cart
@@ -154,10 +157,23 @@ function AddCart({ closeCart }) {
 
             <div
                 className="cart-drawer"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Shopping cart"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="cart-header">
-                    <h1>My Cart</h1>
+                    <div className="cart-heading">
+                        <span className="cart-eyebrow">
+                            FARMERA STORE
+                        </span>
+
+                        <h1>My Cart</h1>
+
+                        <p>
+                            {totalItems} {totalItems === 1 ? "item" : "items"} in your cart
+                        </p>
+                    </div>
 
                     <div className="cart-header-right">
                         {cartItems.length > 0 && (
@@ -165,14 +181,17 @@ function AddCart({ closeCart }) {
                                 className="clear-cart"
                                 onClick={() => dispatch(clearCart())}
                             >
-                                Clear
+                                Clear All
                             </button>
                         )}
 
                         <button
                             className="close-cart"
                             onClick={closeCart}
-                        ></button>
+                            aria-label="Close cart"
+                        >
+                            ×
+                        </button>
                     </div>
                 </div>
 
@@ -185,9 +204,16 @@ function AddCart({ closeCart }) {
                         <h2>Your cart is empty</h2>
 
                         <p>
-                            Add some products to your cart
-                            and they will appear here.
+                            Looks like you haven't added anything
+                            to your cart yet.
                         </p>
+
+                        <button
+                            className="continue-shopping"
+                            onClick={closeCart}
+                        >
+                            Continue Shopping
+                        </button>
                     </div>
                 ) : (
                     <>
@@ -218,6 +244,7 @@ function AddCart({ closeCart }) {
                                                         decreaseQuantity(item._id)
                                                     )
                                                 }
+                                                aria-label={`Decrease ${item.name} quantity`}
                                             >
                                                 −
                                             </button>
@@ -230,6 +257,7 @@ function AddCart({ closeCart }) {
                                                         increaseQuantity(item._id)
                                                     )
                                                 }
+                                                aria-label={`Increase ${item.name} quantity`}
                                             >
                                                 +
                                             </button>
@@ -257,31 +285,38 @@ function AddCart({ closeCart }) {
                         </div>
 
                         <div className="cart-summary">
-                            <div className="summary-row">
-                                <span>Items</span>
-                                <span>{totalItems}</span>
-                            </div>
+                            <h3>Order Summary</h3>
 
                             <div className="summary-row">
-                                <span>Subtotal</span>
+                                <span>Items ({totalItems})</span>
                                 <span>₹{totalPrice}</span>
                             </div>
 
                             <div className="summary-row">
                                 <span>Delivery</span>
-                                <span>Free</span>
+                                <span className="free-delivery">FREE</span>
                             </div>
 
-                            <hr />
+                            <div className="summary-row">
+                                <span>Discount</span>
+                                <span>₹0</span>
+                            </div>
+
+                            <div className="summary-divider"></div>
 
                             <div className="summary-total">
-                                <span>Total</span>
+                                <span>Total Amount</span>
                                 <strong>₹{totalPrice}</strong>
                             </div>
 
                             <button className="checkout-btn">
                                 Proceed to Checkout
+                                <span>→</span>
                             </button>
+
+                            <p className="cart-footer-note">
+                                Fresh products, delivered with care 🌿
+                            </p>
                         </div>
                     </>
                 )}

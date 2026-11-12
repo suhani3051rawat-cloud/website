@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../pages/AuthContext.jsx";
@@ -7,13 +8,14 @@ import "../components/userMenu.css";
 
 function UserMenu({ iconSrc }) {
     const { user, fetchUser, logout } = useAuth();
+
     const {
         selectedAddress,
         selectAddress,
         clearSelectedAddress
     } = useAddress();
 
-    const navigate = useNavigate();             
+    const navigate = useNavigate();
     const menuRef = useRef(null);
 
     const [open, setOpen] = useState(false);
@@ -164,24 +166,22 @@ function UserMenu({ iconSrc }) {
         }
     };
 
-
-const handleLogout = async () => {
-  try {
-    await logout();
-    clearSelectedAddress();
-    setOpen(false);
-    navigate("/");
-  } catch (error) {
-    console.error("Logout failed:", error);
-  }
-};
-
+    const handleLogout = async () => {
+        try {
+            await logout();
+            clearSelectedAddress();
+            setOpen(false);
+            navigate("/");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
 
     return (
         <div className="user-menu" ref={menuRef}>
             <button
                 type="button"
-                className="user-menu-trigger"
+                className={`user-menu-trigger ${open ? "active" : ""}`}
                 onClick={handleIconClick}
                 aria-label="User menu"
             >
@@ -203,88 +203,112 @@ const handleLogout = async () => {
                 {firstName && (
                     <span className="user-menu-name">{firstName}</span>
                 )}
+
+                <span className="user-menu-chevron">⌄</span>
             </button>
 
             {user && open && (
                 <div className="user-menu-panel">
+
                     <div className="user-menu-info">
-                        <h4>{user.name}</h4>
-                        <p>{user.email}</p>
-                        <p>{user.phone_number}</p>
+                        <div className="user-menu-avatar">
+                            {(firstName || "U").charAt(0).toUpperCase()}
+                        </div>
+
+                        <div className="user-menu-user-details">
+                            <span className="user-menu-welcome">WELCOME BACK</span>
+                            <h4>{user.name}</h4>
+                            <p>{user.email}</p>
+                            <p>{user.phone_number}</p>
+                        </div>
                     </div>
 
                     <div className="user-menu-section">
-                        <h5>Addresses</h5>
+                        <div className="user-menu-section-heading">
+                            <div>
+                                <h5>Saved Addresses</h5>
+                                <p>Choose your delivery location</p>
+                            </div>
+
+                            <span className="user-menu-address-count">
+                                {addresses.length}
+                            </span>
+                        </div>
 
                         {addresses.length === 0 && (
-                            <p className="user-menu-empty">
-                                No address saved
-                            </p>
+                            <div className="user-menu-empty">
+                                <span>⌖</span>
+                                <p>No address saved yet</p>
+                                <small>Add an address for easy delivery.</small>
+                            </div>
                         )}
 
-                        {addresses.map((item, index) => {
-                            const isSelected =
-                                selectedAddress?._id === item._id;
+                        <div className="user-menu-address-list">
+                            {addresses.map((item, index) => {
+                                const isSelected =
+                                    selectedAddress?._id === item._id;
 
-                            return (
-                                <div
-                                    className={`user-menu-address ${
-                                        isSelected ? "selected" : ""
-                                    }`}
-                                    key={item._id || index}
-                                    onClick={() => handleSelectAddress(item)}
-                                    role="button"
-                                    tabIndex={0}
-                                    onKeyDown={(event) => {
-                                        if (event.key === "Enter") {
-                                            handleSelectAddress(item);
-                                        }
-                                    }}
-                                    aria-pressed={isSelected}
-                                >
-                                    <button
-                                        type="button"
-                                        className="user-menu-delete"
-                                        onClick={(event) =>
-                                            handleDeleteAddress(
-                                                event,
-                                                item._id
-                                            )
-                                        }
-                                        aria-label="Delete address"
-                                        title="Delete address"
+                                return (
+                                    <div
+                                        className={`user-menu-address ${isSelected ? "selected" : ""}`}
+                                        key={item._id || index}
+                                        onClick={() => handleSelectAddress(item)}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(event) => {
+                                            if (event.key === "Enter") {
+                                                handleSelectAddress(item);
+                                            }
+                                        }}
+                                        aria-pressed={isSelected}
                                     >
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            aria-hidden="true"
-                                        >
-                                            <path d="M3 6h18" />
-                                            <path d="M8 6V4h8v2" />
-                                            <path d="M6 6l1 14h10l1-14" />
-                                            <path d="M10 11v6M14 11v6" />
-                                        </svg>
-                                    </button>
+                                        <div className="user-menu-address-top">
+                                            <span className="user-menu-type">
+                                                <span className="address-type-icon">
+                                                    {item.addrType === "Work" ? "▣" : "⌂"}
+                                                </span>
+                                                {item.addrType}
+                                            </span>
 
-                                    <span className="user-menu-type">
-                                        {item.addrType}
-                                    </span>
+                                            {isSelected && (
+                                                <span className="user-menu-selected-tag">
+                                                    ✓ Selected
+                                                </span>
+                                            )}
 
-                                    {isSelected && (
-                                        <span className="user-menu-selected-tag">
-                                            Selected
-                                        </span>
-                                    )}
+                                            <button
+                                                type="button"
+                                                className="user-menu-delete"
+                                                onClick={(event) =>
+                                                    handleDeleteAddress(event, item._id)
+                                                }
+                                                aria-label="Delete address"
+                                                title="Delete address"
+                                            >
+                                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M3 6h18" />
+                                                    <path d="M8 6V4h8v2" />
+                                                    <path d="M6 6l1 14h10l1-14" />
+                                                    <path d="M10 11v6M14 11v6" />
+                                                </svg>
+                                            </button>
+                                        </div>
 
-                                    <p>{item.addr1}</p>
-                                    <p>{item.addr2}</p>
-                                </div>
-                            );
-                        })}
+                                        <p>{item.addr1}</p>
+                                        <p>{item.addr2}</p>
+
+                                        <div className="user-menu-address-footer">
+                                            {isSelected
+                                                ? "Currently delivering here"
+                                                : "Click to select this address"}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
 
                         {deleteError && (
-                            <p className="user-menu-error">
-                                {deleteError}
-                            </p>
+                            <p className="user-menu-error">{deleteError}</p>
                         )}
                     </div>
 
@@ -293,10 +317,15 @@ const handleLogout = async () => {
                             className="user-menu-form"
                             onSubmit={handleAddAddress}
                         >
+                            <div className="user-menu-form-heading">
+                                <h5>Add New Address</h5>
+                                <p>Enter your complete delivery details</p>
+                            </div>
+
                             <input
                                 type="text"
                                 name="addr1"
-                                placeholder="Address line 1"
+                                placeholder="House no., Building, Street"
                                 value={form.addr1}
                                 onChange={handleChange}
                             />
@@ -304,10 +333,14 @@ const handleLogout = async () => {
                             <input
                                 type="text"
                                 name="addr2"
-                                placeholder="Address line 2"
+                                placeholder="Area, City, Landmark"
                                 value={form.addr2}
                                 onChange={handleChange}
                             />
+
+                            <label className="user-menu-input-label">
+                                Address type
+                            </label>
 
                             <select
                                 name="addrType"
@@ -324,7 +357,7 @@ const handleLogout = async () => {
 
                             <div className="user-menu-form-actions">
                                 <button type="submit" disabled={saving}>
-                                    {saving ? "Saving..." : "Save"}
+                                    {saving ? "Saving..." : "Save Address"}
                                 </button>
 
                                 <button
@@ -344,7 +377,7 @@ const handleLogout = async () => {
                             className="user-menu-add"
                             onClick={() => setShowForm(true)}
                         >
-                            + Add address
+                            <span>＋</span> Add New Address
                         </button>
                     )}
 
@@ -353,7 +386,7 @@ const handleLogout = async () => {
                         className="user-menu-logout"
                         onClick={handleLogout}
                     >
-                        Logout
+                        <span>↪</span> Logout
                     </button>
                 </div>
             )}

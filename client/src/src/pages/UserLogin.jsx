@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import website_Logo from '../assets/logo.svg';
@@ -101,7 +102,7 @@ function UserLogin({ onClose }) {
   return (
     <div className="auth-overlay">
       <div
-        className="auth-modal"
+        className="auth-modal auth-login-modal"
         role="dialog"
         aria-modal="true"
         aria-label="Login"
@@ -118,21 +119,21 @@ function UserLogin({ onClose }) {
         </button>
 
         <div className="auth-content">
-          <img
-            className="auth-logo"
-            src={website_Logo}
-            alt="farmEra logo"
-          />
+          <div className="auth-brand">
+            <img className="auth-logo" src={website_Logo} alt="farmEra logo" />
+            <span>farm<span>Era</span></span>
+          </div>
 
-          <h2>farmEra</h2>
-
-          <p className="auth-title">
-            Welcome back to your farmEra account
-          </p>
+          <div className="auth-heading">
+            <h2>Good to see you again!</h2>
+            <p>
+              Login to your farmEra account and continue shopping fresh.
+            </p>
+          </div>
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="auth-field">
-              <label htmlFor="auth-login-email">Email</label>
+              <label htmlFor="auth-login-email">Email address</label>
               <input
                 id="auth-login-email"
                 type="email"
@@ -144,9 +145,7 @@ function UserLogin({ onClose }) {
               />
 
               {validationErrors.email && (
-                <p className="auth-error">
-                  {validationErrors.email}
-                </p>
+                <p className="auth-error">{validationErrors.email}</p>
               )}
             </div>
 
@@ -163,9 +162,7 @@ function UserLogin({ onClose }) {
               />
 
               {validationErrors.password && (
-                <p className="auth-error">
-                  {validationErrors.password}
-                </p>
+                <p className="auth-error">{validationErrors.password}</p>
               )}
             </div>
 
@@ -174,15 +171,14 @@ function UserLogin({ onClose }) {
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Logging in...' : 'Login to Account'}
+              {!loading && <span>→</span>}
             </button>
 
-            {message && (
-              <p className="auth-success">{message}</p>
-            )}
+            {message && <p className="auth-success">{message}</p>}
 
             {loginError && (
-              <p className="auth-error">{loginError}</p>
+              <p className="auth-error auth-message">{loginError}</p>
             )}
 
             <p className="auth-switch">
