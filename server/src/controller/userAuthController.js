@@ -119,10 +119,6 @@ export const getCurrentUser = async (req, res) => {
         message: "Please login first",
       });
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> db52ac7 (update changes)
     const findUser = await userRegisterModel
       .findById(userId)
       .select("-password -__v")
@@ -133,10 +129,6 @@ export const getCurrentUser = async (req, res) => {
         message: "User not found in database",
       });
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> db52ac7 (update changes)
     const fetchAddress = await addressModel.find({
       user_id: userId,
       "address.isDelete": { $ne: true },
