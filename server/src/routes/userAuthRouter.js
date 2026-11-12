@@ -2,7 +2,7 @@ import { Router } from "express";
 let router = Router();
 import {userRegister, 
         userLogin, 
-        userLogOut, 
+        userLogout, 
         getCurrentUser,
         storeMultipleAddress,
         DeleteAddress,
@@ -13,7 +13,7 @@ import {verifyToken} from "../middleware/tokenVerify.js";
 
 router.post('/register/user', result, userRegister);
 router.post('/login/user', userLogin);
-router.post('/logout/user', userLogOut);
+router.post('/logout/user', userLogout);
 router.get('/getCurrent/user',verifyToken, getCurrentUser);
 router.post('/user/multiAddress/:user_id',storeMultipleAddress);
 router.delete('/address/Delete/:user_id/:address_id',DeleteAddress);

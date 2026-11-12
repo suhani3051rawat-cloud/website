@@ -89,15 +89,14 @@ export const userLogin = async (req,res)=>{
         });
     }
 }
-
 export const userLogout = async (req, res) => {
-  try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      path: "/",
-    });
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/"
+        });
 
     return res.status(200).json({
       success: true,
@@ -112,8 +111,6 @@ export const userLogout = async (req, res) => {
     });
   }
 };
-
-
 export const getCurrentUser = async (req, res) => {
   try {
     const userId = req.data?.id;
@@ -122,6 +119,10 @@ export const getCurrentUser = async (req, res) => {
         message: "Please login first",
       });
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> db52ac7 (update changes)
     const findUser = await userRegisterModel
       .findById(userId)
       .select("-password -__v")
@@ -132,6 +133,10 @@ export const getCurrentUser = async (req, res) => {
         message: "User not found in database",
       });
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> db52ac7 (update changes)
     const fetchAddress = await addressModel.find({
       user_id: userId,
       "address.isDelete": { $ne: true },
