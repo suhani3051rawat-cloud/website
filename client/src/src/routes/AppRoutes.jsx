@@ -32,7 +32,6 @@ function AppRoutes() {
           <Route path="/poha" element={<div>Poha Products Coming Soon</div>} />
           <Route path="/oats" element={<div>Oats Products Coming Soon</div>} />
           <Route path="/egg" element={<div>Egg Products Coming Soon</div>} />
-          <Route path="/product/:id" element={<ProductDetails />} />
 
           <Route
             path="/register"
