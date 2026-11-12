@@ -9,7 +9,6 @@ import CurdProducts from '../pages/CurdProducts';
 import BreadProducts from '../pages/BreadProducts';
 import VermicelliProducts from '../pages/VermicelliProducts';
 import PeanutButter from '../pages/PeanutButter';
-import ProductDetails from '../pages/ProductDetails';
 
 import UserRegister from '../pages/UserRegister';
 import UserLogin from '../pages/UserLogin';
