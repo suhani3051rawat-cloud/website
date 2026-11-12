@@ -68,7 +68,7 @@
     position: absolute;
     top: 12px;
     left: 12px;
-    background: #e9f3df;
+    background: #88b759;
     color:white;
     padding: 5px 10px;
     border-radius: 20px;
@@ -89,7 +89,7 @@
 }
 
 .product-brand {
-    color: #63804f;
+    color: #435b33;
     font-size: 12px;
     font-weight: 750;
     text-transform: uppercase;
