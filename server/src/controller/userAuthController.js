@@ -82,10 +82,12 @@ export const userLogin = async (req,res)=>{
        {
         expiresIn : "7d"
         })
-        res.cookie("refreshToken",refreshToken,{
-            httpOnly : true,
-            maxAge : 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+        });
         res.json({
             message : "you are loggin",
             accessToken 
@@ -141,10 +143,12 @@ export const refreshToken = async (req, res)=>{
     {
         expiresIn : "7d"
     });
-    res.cookie("refreshToken",refreshToken, {
-        httpOnly : true,
-        maxAge : 7 * 24 * 60 * 60 *1000
-    });  
+   res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+   });
     res.json({
         message : "token created successfully",
         accessToken

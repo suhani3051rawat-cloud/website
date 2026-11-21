@@ -253,7 +253,9 @@ export const searchProducts = async (req, res)=>{
             product : findProduct
         }); 
     } catch (error) {
-        message : error.message
+        res.json({
+            message : error.message
+        })
     }
 }
 export const DeleteUserAccount = async (req, res)=>{
