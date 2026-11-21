@@ -1,8 +1,8 @@
 import { userRegisterModel } from "../model/userRegisterModel.js";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
-import mongoose from "mongoose";
 import { addressModel } from "../model/storeUserMultipleAddress.js";
+import { config } from "dotenv";
 
 export const userRegister = async (req,res)=>{ 
  try {
@@ -67,20 +67,28 @@ export const userLogin = async (req,res)=>{
                 message : "Incorrect password"
             });
         }
-        let Token = jwt.sign({
-                id : findUser._id 
-                },process.env.JWT_TOKEN,
-                { expiresIn: "1d"}
-            );
-            res.cookie("token", Token ,{
-                httpOnly : true, 
-                secure   : true,
-                maxAge   : 1000*60*60*24,
-                sameSite: "none",
-                path: "/"
-            });
+        let accessToken = jwt.sign({
+            id : findUser._id,
+         },
+            process.env.ACCESS_TOKEN ,
+            {
+                expiresIn : "15m"
+            }
+        ) 
+        let refreshToken = jwt.sign({
+            id : findUser._id
+        },
+        process.env.REFRESH_TOKEN,
+       {
+        expiresIn : "7d"
+        })
+        res.cookie("refreshToken",refreshToken,{
+            httpOnly : true,
+            maxAge : 7 * 24 * 60 * 60 * 1000
+        })
         res.json({
             message : "you are loggin",
+            accessToken 
         });
     } catch (error) {
         return res.json({
@@ -91,7 +99,7 @@ export const userLogin = async (req,res)=>{
 }
 export const userLogout = async (req, res) => {
     try {
-        res.clearCookie("token", {
+        res.clearCookie("refreshToken", {
             httpOnly: true,
             secure: true,
             sameSite: "none",
@@ -111,6 +119,42 @@ export const userLogout = async (req, res) => {
     });
   }
 };
+export const refreshToken = async (req, res)=>{
+    try {
+       let Token = req.cookies.refreshToken;
+    if(!Token){
+        return res.status(401).json({
+            message : "refresh token not found"
+        });
+    }
+    let decoded = jwt.verify(Token , process.env.REFRESH_TOKEN); 
+    let accessToken = jwt.sign({
+        id : decoded.id
+    },
+     process.env.ACCESS_TOKEN,
+    {expiresIn : "15m"});
+
+    let refreshToken = jwt.sign({
+        id : decoded.id
+    },
+    process.env.REFRESH_TOKEN,
+    {
+        expiresIn : "7d"
+    });
+    res.cookie("refreshToken",refreshToken, {
+        httpOnly : true,
+        maxAge : 7 * 24 * 60 * 60 *1000
+    });  
+    res.json({
+        message : "token created successfully",
+        accessToken
+    });
+    } catch (error) {
+        res.json({
+            message : error.message
+        });
+    }
+}
 export const getCurrentUser = async (req, res) => {
   try {
     const userId = req.data?.id;

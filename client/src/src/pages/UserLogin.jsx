@@ -6,6 +6,7 @@ import '../components/userRegister.css';
 import { validateForm } from '../utils/validation.js';
 import { useAuth } from '../pages/AuthContext.jsx';
 import { userApi } from '../api/axios.js';
+import { setAccessToken } from '../api/axios.js';
 
 function UserLogin({ onClose }) {
   const navigate = useNavigate();
@@ -72,6 +73,8 @@ function UserLogin({ onClose }) {
 
     try {
       const resp = await userApi.post('/login/user', formData);
+      setAccessToken(resp.data.accessToken);
+      await fetchUser();
 
       setMessage(resp.data.message || 'Login successful!');
 
