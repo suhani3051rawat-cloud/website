@@ -7,9 +7,6 @@ import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/HeroSection.jsx";
 import AppRoutes from "./routes/AppRoutes.jsx";
 import Footer from "./pages/Footer.jsx";
-import AdminLogin from "./admin/AdminLogin";
-import AdminDashboard from "./admin/AdminDashboard";
-import AdminProtectedRoute from "./admin/AdminProtectedRoute";
 
 
 function App() {
