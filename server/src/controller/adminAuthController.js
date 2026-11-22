@@ -55,19 +55,31 @@ export const adminLogin = async (req, res)=>{
                 message : "Incorrect password"
             });
         }
-        let Token = jwt.sign({
-                    id : adminLogin._id 
-                },process.env.JWT_TOKEN,
-                { expiresIn: "1d"}
-                );
-                res.cookie("token", Token ,{
-                    httpOnly : true, 
-                    secure   : false,
-                    maxAge   : 1000*60*60*24,
+         let accessToken = jwt.sign({
+                    id : findUser._id,
+                 },
+                    process.env.ACCESS_TOKEN ,
+                    {
+                        expiresIn : "15m"
+                    }
+                ) 
+                let refreshToken = jwt.sign({
+                    id : findUser._id
+                },
+                process.env.REFRESH_TOKEN,
+               {
+                expiresIn : "7d"
+                })
+                res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+                maxAge: 7 * 24 * 60 * 60 * 1000
                 });
-        return res.json({
-            message : "Admin is logged in",
-        });
+                res.json({
+                    message : "you are loggin",
+                    accessToken 
+                });
     } 
     catch(error){
        return res.json({

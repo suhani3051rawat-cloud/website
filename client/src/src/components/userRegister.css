@@ -391,3 +391,30 @@
     transition: none;
   }
 }
+
+
+.otp-info {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: clamp(11px, 2.5vw, 13px);
+  color: #666;
+  line-height: 1.5;
+  margin: 8px 0 0;
+  padding: 0 2px;
+  overflow-wrap: break-word;
+  text-align: left;
+}
+
+@media (max-width: 480px) {
+  .otp-info {
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 6px;
+  }
+}
+
+@media (min-width: 481px) {
+  .otp-info {
+    max-width: 100%;
+  }
+}

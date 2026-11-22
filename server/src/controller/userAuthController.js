@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import { addressModel } from "../model/storeUserMultipleAddress.js";
 import { config } from "dotenv";
+import { randomInt, createHash } from "crypto";
+import { transporter } from "../../config/nodeMailer.js";
+import otpModel from "../model/otpModel.js";
 
 export const userRegister = async (req,res)=>{ 
  try {
@@ -160,42 +163,160 @@ export const refreshToken = async (req, res)=>{
     }
 }
 export const getCurrentUser = async (req, res) => {
-  try {
-    const userId = req.data?.id;
-    if (!userId) {
-      return res.status(401).json({
-        message: "Please login first",
-      });
+    try {
+        const userId = req.data?.id;
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "Please login first",
+            });
+        }
+
+        const findUser = await userRegisterModel
+            .findById(userId)
+            .select("-password -__v")
+            .lean();
+
+        if (!findUser) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+        const fetchAddress = await addressModel.find({
+            user_id: userId
+        }).lean();
+        const activeAddresses = fetchAddress.map((item) => ({
+            ...item,
+            address: item.address.filter(
+                (addr) => addr.isDelete !== true
+            )
+        }));
+
+        console.log("Fetched Addresses:", activeAddresses);
+
+        return res.status(200).json({
+            message: "User fetched successfully",
+            user: {
+                ...findUser,
+                Address: activeAddresses
+            }
+        });
+
+    } catch (error) {
+        console.error("getCurrentUser error:", error);
+
+        return res.status(500).json({
+            message: "Unable to fetch current user",
+            error: error.message
+        });
     }
-    const findUser = await userRegisterModel
-      .findById(userId)
-      .select("-password -__v")
-      .lean();
+};
+const hashOTP = (otp) => {
+    return createHash("sha256").update(otp).digest("hex");
+};
+export const sendOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                message: "Email is required"
+            });
+        }
+        const userEmail = email.trim().toLowerCase();
 
-    if (!findUser) {
-      return res.status(404).json({
-        message: "User not found in database",
-      });
+        const otp = randomInt(100000, 1000000).toString();
+
+        const hashedOTP = hashOTP(otp);
+
+        console.log("3. OTP generated");
+
+        const mailResponse = await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: "Your Email Verification OTP",
+            html: `
+                <h2>Email Verification</h2>
+                <p>Your OTP is:</p>
+                <h1>${otp}</h1>
+                <p>This OTP is valid for 5 minutes.</p>
+                <p>Do not share this OTP with anyone.</p>
+            `
+        });
+
+        console.log("4. Email sent:", mailResponse.messageId);
+
+        await otpModel.findOneAndUpdate(
+            { email: userEmail },
+            {
+                otp: hashedOTP,
+                expiresAt: new Date(Date.now() + 5 * 60 * 1000)
+            },
+            { upsert: true, new: true }
+        );
+
+        console.log("5. OTP saved in database");
+
+        return res.status(200).json({
+            message: "OTP sent successfully"
+        });
+
+    } catch (error) {
+        console.log("OTP ERROR:", error);
+
+        return res.status(500).json({
+            message: "Unable to send OTP",
+            error: error.message
+        });
     }
-    const fetchAddress = await addressModel.find({
-      user_id: userId,
-      "address.isDelete": { $ne: true },
-    }).lean();
+};
+export const verifyOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
 
-    return res.status(200).json({
-      message: "User logged in",
-      user: {
-        ...findUser,
-        Address: fetchAddress,
-      },
-    });
-  } catch (error) {
-    console.error("getCurrentUser error:", error);
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Email and OTP are required"
+            });
+        }
 
-    return res.status(500).json({
-      message: "Unable to fetch current user",
-    });
-  }
+        const userEmail = email.trim().toLowerCase();
+
+        const savedOTP = await otpModel.findOne({
+            email: userEmail
+        });
+
+        if (!savedOTP) {
+            return res.status(400).json({
+                message: "OTP not found. Please request a new OTP."
+            });
+        }
+
+        if (savedOTP.expiresAt < new Date()) {
+            await otpModel.deleteOne({ email: userEmail });
+
+            return res.status(400).json({
+                message: "OTP expired. Please request a new OTP."
+            });
+        }
+
+        if (savedOTP.otp !== hashOTP(otp.toString())) {
+            return res.status(400).json({
+                message: "Invalid OTP"
+            });
+        }
+
+        await otpModel.deleteOne({ email: userEmail });
+
+        return res.status(200).json({
+            message: "Email verified successfully"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "OTP verification failed",
+            error: error.message
+        });
+    }
 };
 export const storeMultipleAddress = async (req, res) =>{
     try {

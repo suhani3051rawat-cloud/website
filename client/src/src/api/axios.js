@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 const API_URL =
@@ -10,10 +11,12 @@ export const userApi = axios.create({
   withCredentials: true,
 });
 
-export const api = axios.create({
+export const adminApi = axios.create({
   baseURL: `${API_URL}/admin/Auth`,
   withCredentials: true,
 });
+
+export const api = adminApi;
 
 let accessToken = null;
 
